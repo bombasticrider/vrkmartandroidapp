@@ -1,0 +1,78 @@
+id,name,category,category_slug,brand,image_path,pack_size_1,mrp_1,pack_size_2,mrp_2,pack_size_3,mrp_3
+p-01,Aashirvaad Superior MP Shudh Chakki Atta,Atta & Flours,grocery,Aashirvaad,/images/products/Atta.webp,10 kg Pack,550,5 kg Pack,285,1 kg Pack,62
+p-02,India Gate Basmati Rice Feast Rozzana,Rice & Grains,grocery,India Gate,/images/products/basmati_rice.webp,5 kg Bag,495,1 kg Bag,110,,
+p-03,Bullet GTS Super Fine Rice,Rice & Grains,grocery,Bullet GTS,/images/products/gts_rice.webp,25 kg Bag,1450,10 kg Bag,620,5 kg Bag,320
+p-04,Fine Premium Besan Gram Flour,Atta & Flours,grocery,Premia,/images/products/besan_flour.webp,1 kg Pack,125,500 g Pack,65,,
+p-05,Pure Refined Maida All Purpose Flour,Atta & Flours,grocery,Premia,/images/products/Maida.webp,1 kg Pack,58,500 g Pack,30,,
+p-06,Roasted Sooji Rava Semolina,Atta & Flours,grocery,Premia,/images/products/Sooji.webp,1 kg Pack,65,500 g Pack,35,,
+p-07,Premium Thick Poha Aval,Rice & Grains,grocery,Premia,/images/products/Poha.webp,1 kg Pack,70,500 g Pack,38,,
+p-08,Bambino Roasted Vermicelli,Packaged Food,packaged-food,Bambino,/images/products/Vermicelli.webp,850 g Pack,95,400 g Pack,50,,
+p-09,Unpolished Cleaned Toor Dal,Dals & Pulses,grocery,Premia,/images/products/toor_dal.webp,1 kg Pack,195,2 kg Pack,385,500 g Pack,100
+p-10,Desi High Protein Chana Dal,Dals & Pulses,grocery,Premia,/images/products/channa_dal.webp,1 kg Pack,120,500 g Pack,62,,
+p-11,Nutritious Red Masoor Dal Split,Dals & Pulses,grocery,Premia,/images/products/masoor_dal.webp,1 kg Pack,110,500 g Pack,58,,
+p-12,Raw Bold Groundnut Peanuts (Moongfali),Dals & Pulses,grocery,Premia,/images/products/Peanuts.webp,1 kg Pack,180,500 g Pack,95,,
+p-13,Dry Green Vatana Green Peas,Dals & Pulses,grocery,Premia,/images/products/green_peas.webp,1 kg Pack,130,500 g Pack,68,,
+p-14,Fortune Sunlite Refined Sunflower Oil,Edible Oils,grocery,Fortune,/images/products/Fortune.webp,1 Litre Pouch,165,5 Litre Jar,799,15 Litre Tin,2350
+p-15,Freedom Refined Sunflower Oil,Edible Oils,grocery,Freedom,/images/products/Freedom.webp,1 Litre Pouch,160,5 Litre Jar,780,,
+p-16,Sunpure Pure Refined Sunflower Oil,Edible Oils,grocery,Sunpure,/images/products/Sunpure.webp,1 Litre Pouch,160,5 Litre Jar,780,,
+p-17,Gold Winner Refined Sunflower Oil,Edible Oils,grocery,Gold Winner,/images/products/gold_winner.webp,1 Litre Pouch,165,5 Litre Jar,795,,
+p-18,Saffola Gold Pro Healthy Blend Cooking Oil,Edible Oils,grocery,Saffola,/images/products/Saffola.webp,1 Litre Pouch,195,5 Litre Jar,950,,
+p-19,Ruchi Gold Refined Palm Oil,Edible Oils,grocery,Ruchi Gold,/images/products/ruchi_gold.webp,1 Litre Pouch,125,5 Litre Jar,610,,
+p-20,Amul Pure Cow Ghee,Dairy & Ghee,dairy,Amul,/images/products/Ghee.webp,1 Litre Tin,650,500 ml Pouch,335,200 ml Bottle,145
+p-21,Whole Dry Red Chilli Stemless,Spices & Masalas,grocery,Premia,/images/products/Chilli.webp,500 g Pack,240,200 g Pack,100,100 g Pack,52
+p-22,Everest Tikhalal Hot Red Chilli Powder,Spices & Masalas,grocery,Everest,/images/products/chilli_powder.webp,500 g Box,290,200 g Box,122,100 g Box,64
+p-23,Everest Pure Golden Turmeric Powder (Haldi),Spices & Masalas,grocery,Everest,/images/products/turmeric_powder.webp,500 g Carton,160,200 g Box,68,100 g Box,36
+p-24,Everest Coriander Powder (Dhaniya),Spices & Masalas,grocery,Everest,/images/products/dhaniya_powder.webp,500 g Box,165,200 g Box,70,100 g Box,38
+p-25,Madhur Pure & Hygienic Sulphur Free Sugar,Sugar & Salt,grocery,Madhur,/images/products/Sugar.webp,5 kg Mega Pack,275,1 kg Pouch,58,,
+p-26,Organic Kolhapuri Solid Jaggery Block (Gud),Sugar & Salt,grocery,Premia,/images/products/Jaggary.webp,1 kg Block,85,500 g Block,45,,
+p-27,Tata Salt Vaccum Evaporated Iodized Salt,Sugar & Salt,grocery,Tata,/images/products/Salt.webp,1 kg Pouch,28,2 kg Twin Pack,56,,
+p-28,Bru Instant Coffee Powder,Beverages,packaged-food,Bru,/images/products/Bru.webp,200 g Jar,385,100 g Pouch,195,50 g Pouch,100
+p-29,Brooke Bond Red Label Strong CTC Tea,Beverages,packaged-food,Brooke Bond,/images/products/red_label.webp,1 kg Box,560,500 g Pouch,290,250 g Box,150
+p-30,Brooke Bond Taj Mahal Rich CTC Tea,Beverages,packaged-food,Brooke Bond,/images/products/taj_mahal.webp,1 kg Box,740,500 g Box,380,250 g Box,195
+p-31,Boost Chocolate Energy & Nutrition Drink,Beverages,packaged-food,Boost,/images/products/Boost.webp,1 kg Refill,520,500 g Jar,295,,
+p-32,Complan Royale Chocolate Health Drink,Beverages,packaged-food,Complan,/images/products/Complan.webp,1 kg Refill,610,500 g Jar,340,,
+p-33,Coca Cola Original Taste Soft Drink,Beverages,packaged-food,Coca Cola,/images/products/Coke.webp,2 Litre Bottle,95,750 ml Bottle,40,250 ml Can,35
+p-34,Pepsi Refreshing Cola Soft Drink,Beverages,packaged-food,Pepsi,/images/products/Pepsi.webp,2 Litre Bottle,95,750 ml Bottle,40,250 ml Can,35
+p-35,Maaza Real Mango Juice Pulp Drink,Beverages,packaged-food,Maaza,/images/products/Maaza.webp,1.2 Litre Bottle,75,600 ml Bottle,40,150 ml Tetrapack,15
+p-36,Maggi 2-Minute Instant Noodles Masala,Packaged Food,packaged-food,Nestle,/images/products/Maggi.webp,Pack of 12 (840g),180,Pack of 4 (280g),60,Single Pack (70g),15
+p-37,Kellogg's Corn Flakes Original Real Almond & Honey,Packaged Food,packaged-food,Kellogg's,/images/products/Kelloggs.webp,1.2 kg Family Pack,460,475 g Box,210,,
+p-38,Kissan Fresh Tomato Ketchup Sauce,Packaged Food,packaged-food,Kissan,/images/products/Kissan.webp,1.2 kg Squeezy Bottle,175,500 g Pouch,85,,
+p-39,Cadbury Dairy Milk Silk Chocolate Bar,Snacks & Chocolates,packaged-food,Cadbury,/images/products/Cadbury.webp,150 g Giant Bar,185,60 g Regular Bar,80,,
+p-40,Snickers Peanut & Caramel Milk Chocolate,Snacks & Chocolates,packaged-food,Snickers,/images/products/Snickers.webp,45 g Bar,50,22 g Mini Bar,25,,
+p-41,Oreo Original Vanilla Creme Sandwich Biscuits,Biscuits & Cookies,packaged-food,Oreo,/images/products/Oreo.webp,300 g Family Pack,100,120 g Standard Pack,40,,
+p-42,Parle-G Original Glucose Biscuits,Biscuits & Cookies,packaged-food,Parle,/images/products/parle_g.webp,800 g Super Saver,90,250 g Value Pack,30,,
+p-43,Britannia Good Day Butter Cookies,Biscuits & Cookies,packaged-food,Britannia,/images/products/good_day.webp,600 g Jumbo Pack,150,200 g Standard Pack,50,,
+p-44,Sunfeast Dark Fantasy Choco Fills,Biscuits & Cookies,packaged-food,Sunfeast,/images/products/dark_fantasy.webp,300 g Luxury Pack,175,75 g Standard Pack,45,,
+p-45,Sunfeast Marie Light Rich Crisp Biscuits,Biscuits & Cookies,packaged-food,Sunfeast,/images/products/marie_light.webp,300 g Value Pack,45,120 g Pack,20,,
+p-46,Britannia Fruity Treat Soft Cakes,Biscuits & Cookies,packaged-food,Britannia,/images/products/b_cakes.webp,140 g Pack of 6,40,45 g Twin Pack,15,,
+p-47,Britannia Toastea Crispy Wheat Rusk,Biscuits & Cookies,packaged-food,Britannia,/images/products/b_rusk.webp,600 g Family Pack,90,200 g Standard Pack,35,,
+p-48,Lay's Classic Salted Potato Chips,Snacks & Munchies,packaged-food,Lay's,/images/products/Lays.webp,115 g Party Pack,50,50 g Standard Pack,20,,
+p-49,Kurkure Masala Munch Crispy Snacks,Snacks & Munchies,packaged-food,Kurkure,/images/products/Kurkure.webp,115 g Party Pack,50,50 g Standard Pack,20,,
+p-50,Bingo Mad Angles Achaari Masti,Snacks & Munchies,packaged-food,Bingo,/images/products/Bingo.webp,130 g Party Pack,50,66 g Standard Pack,20,,
+p-51,Haldiram's Nagpur Aloo Bhujia Namkeen,Snacks & Munchies,packaged-food,Haldiram's,/images/products/Haldirams.webp,1 kg Mega Pack,280,400 g Value Pack,120,150 g Pack,50
+p-52,Ariel Matic Front & Top Load Detergent Powder,Laundry & Home Care,home-care,Ariel,/images/products/ariel.webp,4 kg Value Bag,980,2 kg Pack,510,1 kg Pouch,265
+p-53,Rin Supreme Detergent Bar Cake,Laundry & Home Care,home-care,Rin,/images/products/rin.webp,Pack of 4 (1000g),90,250 g Bar,25,,
+p-54,Comfort After Wash Morning Fresh Fabric Conditioner,Laundry & Home Care,home-care,Comfort,/images/products/comfort.webp,2 Litre Bottle,480,860 ml Bottle,235,200 ml Pouch,60
+p-55,Vim Lemon Dishwash Liquid Gel,Utensil & Home Care,home-care,Vim,/images/products/vim.webp,2 Litre Economy Can,520,750 ml Bottle,210,250 ml Bottle,75
+p-56,Harpic Power Plus Toilet Cleaner Liquid,Home Cleaning,home-care,Harpic,/images/products/harpic.webp,1 Litre Twin Pack,380,1 Litre Bottle,195,500 ml Bottle,105
+p-57,Lizol Disinfectant Floor Cleaner Citrus,Home Cleaning,home-care,Lizol,/images/products/lizol.webp,2 Litre Economy Can,410,1 Litre Bottle,225,500 ml Bottle,120
+p-58,Odonil Room Air Freshener Blocks Assorted,Home Fragrance,home-care,Odonil,/images/products/odonil.webp,Pack of 4 (200g),195,50 g Single Block,55,,
+p-59,All Out Ultra Mosquito Liquid Vaporizer Refill,Pest Control,home-care,All Out,/images/products/all_out.webp,Pack of 4 Refills (180ml),320,Pack of 2 Refills,170,Single Refill (45ml),90
+p-60,GoodKnight Gold Flash Liquid Vaporizer Machine + Refill,Pest Control,home-care,GoodKnight,/images/products/good_night.webp,Machine + 2 Refills,210,Refill Twin Pack,165,,
+p-61,Colgate Strong Teeth Calcium Cavity Protection Toothpaste,Oral Care,oral-care,Colgate,/images/products/colgate.webp,500 g Saver Pack,285,200 g Standard Tube,125,100 g Tube,65
+p-62,Sensodyne Rapid Relief Sensitivity Toothpaste,Oral Care,oral-care,Sensodyne,/images/products/sensodyne.webp,150 g Twin Pack,350,80 g Single Tube,190,,
+p-63,Oral-B CrossAction Pro Health Soft Toothbrush,Oral Care,oral-care,Oral-B,/images/products/oral_b.webp,Pack of 4 Family Set,220,Single Toothbrush,60,,
+p-64,Lifebuoy Total 10 Antibacterial Germ Protection Soap,Bath & Body,personal-care,Lifebuoy,/images/products/lifebouy.webp,Pack of 4 (500g),150,125 g Single Bar,40,,
+p-65,Dove Deeply Nourishing Moisturizing Cream Beauty Soap,Bath & Body,personal-care,Dove,/images/products/dove.webp,Pack of 4 (400g),275,100 g Single Bar,75,,
+p-66,Mysore Sandal Pure Sandalwood Oil Soap,Bath & Body,personal-care,Mysore Sandal,/images/products/mysore_sandal.webp,Pack of 3 (450g),285,150 g Single Bar,100,,
+p-67,Clinic Plus Strong & Long Health Shampoo with Milk Protein,Hair Care,hair-care,Clinic Plus,/images/products/clinic_plus.webp,1 Litre Family Bottle,650,650 ml Bottle,450,340 ml Bottle,250
+p-68,Parachute 100% Pure Coconut Hair Oil,Hair Care,hair-care,Parachute,/images/products/parachute.webp,500 ml Bottle,225,300 ml Bottle,145,175 ml Bottle,90
+p-69,Indulekha Bringha Ayurvedic Hair Fall Oil with Comb,Hair Care,hair-care,Indulekha,/images/products/indulekha.webp,100 ml Bottle,430,50 ml Bottle,240,,
+p-70,Glow & Lovely Advanced Multivitamin Brightening Cream,Skin Care,personal-care,Glow & Lovely,/images/products/fair_and_lovely.webp,110 g Tube,210,50 g Tube,110,25 g Tube,60
+p-71,Pond's Dreamflower Fragrant Talcum Powder,Skin Care,personal-care,Pond's,/images/products/ponds.webp,400 g Saver Can,290,200 g Can,160,100 g Bottle,85
+p-72,Nivea Soft Light Moisturising Cream with Vitamin E,Skin Care,personal-care,Nivea,/images/products/nivea.webp,300 ml Tub,399,200 ml Tub,280,100 ml Tub,160
+p-73,Vaseline Original Pure Skin Jelly,Skin Care,personal-care,Vaseline,/images/products/vasaline.webp,100 g Tub,125,50 g Tub,70,25 g Mini Tub,40
+p-74,Elle 18 Color Pops Matte Lip Color,Cosmetics,personal-care,Elle 18,/images/products/lipstic.webp,4.3 g Bullet,100,,,
+p-75,Gillette Mach 3 Turbo Razor Blade Cartridges,Men's Grooming,personal-care,Gillette,/images/products/gillette.webp,Pack of 4 Cartridges,650,Pack of 2 Cartridges,360,Single Razor,250
+p-76,Whisper Choice Ultra Sanitary Napkins XL Wings,Personal Hygiene,personal-care,Whisper,/images/products/whispers.webp,Pack of 40 Pads,320,Pack of 20 Pads,170,Pack of 6 Pads,55
+p-77,Pampers All Round Protection Baby Diaper Pants L,Baby Care,personal-care,Pampers,/images/products/pampers.webp,Large 64 Pants Mega Box,999,Large 32 Pants Pack,549,Large 10 Pants Pack,199
