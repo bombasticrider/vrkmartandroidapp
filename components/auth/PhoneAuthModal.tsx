@@ -9,7 +9,6 @@ import { ShieldCheck, X, ArrowRight, RotateCcw } from 'lucide-react';
 declare global {
   interface Window {
     recaptchaVerifier?: RecaptchaVerifier;
-    recaptchaWidgetId?: any;
     confirmationResult?: ConfirmationResult;
   }
 }
@@ -31,9 +30,61 @@ export default function PhoneAuthModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [resendTimer, setResendTimer] = useState(30);
+  const [recaptchaReady, setRecaptchaReady] = useState(false);
 
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { setAuth } = useAuthStore();
+
+  // Initialize reCAPTCHA inside the modal when opened
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const timer = setTimeout(() => {
+      try {
+        if (typeof window !== 'undefined' && document.getElementById('modal-recaptcha')) {
+          if (window.recaptchaVerifier) {
+            try {
+              window.recaptchaVerifier.clear();
+            } catch (_) {}
+          }
+
+          window.recaptchaVerifier = new RecaptchaVerifier(
+            firebaseAuth,
+            'modal-recaptcha',
+            {
+              size: 'normal',
+              callback: () => {
+                setRecaptchaReady(true);
+                setError('');
+              },
+              'expired-callback': () => {
+                setRecaptchaReady(false);
+                setError('reCAPTCHA expired. Please tick the checkbox again.');
+              },
+            }
+          );
+
+          window.recaptchaVerifier.render().then(() => {
+            setRecaptchaReady(true);
+          }).catch((err) => {
+            console.error('reCAPTCHA render error:', err);
+          });
+        }
+      } catch (err: any) {
+        console.error('reCAPTCHA setup error:', err);
+      }
+    }, 400);
+
+    return () => {
+      clearTimeout(timer);
+      if (window.recaptchaVerifier) {
+        try {
+          window.recaptchaVerifier.clear();
+          window.recaptchaVerifier = undefined;
+        } catch (_) {}
+      }
+    };
+  }, [isOpen]);
 
   // Resend countdown timer
   useEffect(() => {
@@ -46,37 +97,7 @@ export default function PhoneAuthModal({
     return () => clearInterval(interval);
   }, [step, resendTimer]);
 
-  const getOrCreateRecaptcha = async (): Promise<RecaptchaVerifier> => {
-    if (typeof window === 'undefined') {
-      throw new Error('Window is undefined');
-    }
-
-    if (window.recaptchaVerifier) {
-      try {
-        await window.recaptchaVerifier.render();
-        return window.recaptchaVerifier;
-      } catch (_) {
-        try {
-          window.recaptchaVerifier.clear();
-        } catch (_) {}
-        window.recaptchaVerifier = undefined;
-      }
-    }
-
-    const verifier = new RecaptchaVerifier(firebaseAuth, 'recaptcha-container', {
-      size: 'invisible',
-      callback: () => {
-        // reCAPTCHA solved
-      },
-      'expired-callback': () => {
-        setError('reCAPTCHA expired. Please try again.');
-      },
-    });
-
-    await verifier.render();
-    window.recaptchaVerifier = verifier;
-    return verifier;
-  };
+  if (!isOpen) return null;
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,16 +109,19 @@ export default function PhoneAuthModal({
       return;
     }
 
+    if (!window.recaptchaVerifier) {
+      setError('Please tick the reCAPTCHA checkbox below first.');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const verifier = await getOrCreateRecaptcha();
       const formattedPhone = `+91${cleanMobile}`;
-
       const confirmation = await signInWithPhoneNumber(
         firebaseAuth,
         formattedPhone,
-        verifier
+        window.recaptchaVerifier
       );
 
       window.confirmationResult = confirmation;
@@ -106,22 +130,12 @@ export default function PhoneAuthModal({
     } catch (err: any) {
       console.error('Firebase SMS Error Details:', err);
 
-      // Handle common Firebase phone auth errors with clear advice
       if (err.code === 'auth/invalid-phone-number') {
         setError('Invalid mobile number format.');
       } else if (err.code === 'auth/too-many-requests') {
         setError('Too many SMS requests sent. Please wait a few minutes.');
       } else {
         setError(`${err.message || 'Failed to send SMS OTP'} (${err.code || 'error'})`);
-      }
-
-
-      // Reset reCAPTCHA for next attempt
-      if (window.recaptchaVerifier) {
-        try {
-          window.recaptchaVerifier.clear();
-        } catch (_) {}
-        window.recaptchaVerifier = undefined;
       }
     } finally {
       setLoading(false);
@@ -193,8 +207,6 @@ export default function PhoneAuthModal({
     }
   };
 
-  if (!isOpen) return null;
-
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
       <div className="bg-white w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl relative border border-gray-100 animate-in fade-in zoom-in-95 duration-200">
@@ -216,7 +228,7 @@ export default function PhoneAuthModal({
           </h2>
           <p className="text-xs text-gray-500 mt-1">
             {step === 'PHONE'
-              ? 'Enter your 10-digit mobile number to get an instant SMS OTP'
+              ? 'Enter your 10-digit mobile number to receive an instant SMS OTP'
               : `Enter the 6-digit OTP code sent via SMS to +91 ${mobile}`}
           </p>
         </div>
@@ -244,6 +256,11 @@ export default function PhoneAuthModal({
               </div>
             </div>
 
+            {/* Visible reCAPTCHA Container */}
+            <div className="flex justify-center my-3 overflow-hidden rounded-xl">
+              <div id="modal-recaptcha"></div>
+            </div>
+
             {error && (
               <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-medium leading-relaxed">
                 {error}
@@ -259,7 +276,7 @@ export default function PhoneAuthModal({
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
-                  <span>Send Free SMS OTP</span>
+                  <span>Send SMS OTP</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
