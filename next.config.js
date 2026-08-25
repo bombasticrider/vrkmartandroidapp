@@ -23,7 +23,7 @@ const nextConfig = {
     ],
     formats: ['image/webp', 'image/avif'],
   },
-  // Security headers
+  // Security headers with whitelisted Firebase Auth & Google reCAPTCHA
   async headers() {
     return [
       {
@@ -42,11 +42,12 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://apis.google.com https://va.vercel-scripts.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: blob: https://negwlhxaovotdtihcpul.supabase.co https://cdn.dmart.in",
-              "connect-src 'self' https://negwlhxaovotdtihcpul.supabase.co https://api.phonepe.com wss://realtime.supabase.co",
+              "img-src 'self' data: blob: https://negwlhxaovotdtihcpul.supabase.co https://cdn.dmart.in https://www.gstatic.com https://www.google.com",
+              "connect-src 'self' https://negwlhxaovotdtihcpul.supabase.co https://api.phonepe.com wss://realtime.supabase.co https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.firebaseio.com https://www.google.com/recaptcha/ https://*.vercel-insights.com",
+              "frame-src 'self' https://www.google.com/recaptcha/ https://recaptcha.google.com/ https://vrkmartandroid.firebaseapp.com",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",
