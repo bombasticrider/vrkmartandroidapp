@@ -111,13 +111,10 @@ export default function PhoneAuthModal({
         setError('Invalid mobile number format.');
       } else if (err.code === 'auth/too-many-requests') {
         setError('Too many SMS requests sent. Please wait a few minutes.');
-      } else if (err.code === 'auth/captcha-check-failed' || err.code === 'auth/internal-error') {
-        setError(
-          'SMS service verification issue. Please check that Phone Auth is enabled in Firebase Console.'
-        );
       } else {
-        setError(err.message || 'Failed to send SMS OTP.');
+        setError(`${err.message || 'Failed to send SMS OTP'} (${err.code || 'error'})`);
       }
+
 
       // Reset reCAPTCHA for next attempt
       if (window.recaptchaVerifier) {
