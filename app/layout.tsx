@@ -49,9 +49,11 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         {children}
+        <div id="recaptcha-container"></div>
         <Analytics />
         <SpeedInsights />
       </body>
+
     </html>
   )
 }

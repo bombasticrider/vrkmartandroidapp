@@ -4,8 +4,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from 'firebase/auth';
 import { firebaseAuth } from '@/lib/firebase';
 import { useAuthStore } from '@/store/useAuthStore';
-import { Phone, ShieldCheck, X, ArrowRight, RotateCcw } from 'lucide-react';
-import Image from 'next/image';
+import { ShieldCheck, X, ArrowRight, RotateCcw } from 'lucide-react';
+
+declare global {
+  interface Window {
+    recaptchaVerifier?: RecaptchaVerifier;
+    recaptchaWidgetId?: any;
+    confirmationResult?: ConfirmationResult;
+  }
+}
 
 interface PhoneAuthModalProps {
   isOpen: boolean;
@@ -24,41 +31,9 @@ export default function PhoneAuthModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [resendTimer, setResendTimer] = useState(30);
-  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
 
-  const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { setAuth } = useAuthStore();
-
-  // Initialize invisible reCAPTCHA
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const initRecaptcha = () => {
-      try {
-        if (!recaptchaVerifierRef.current && typeof window !== 'undefined') {
-          recaptchaVerifierRef.current = new RecaptchaVerifier(
-            firebaseAuth,
-            'recaptcha-container',
-            {
-              size: 'invisible',
-              callback: () => {
-                // reCAPTCHA solved
-              },
-              'expired-callback': () => {
-                setError('reCAPTCHA expired. Please try again.');
-              },
-            }
-          );
-        }
-      } catch (err: any) {
-        console.error('reCAPTCHA init error:', err);
-      }
-    };
-
-    const timer = setTimeout(initRecaptcha, 300);
-    return () => clearTimeout(timer);
-  }, [isOpen]);
 
   // Resend countdown timer
   useEffect(() => {
@@ -71,7 +46,37 @@ export default function PhoneAuthModal({
     return () => clearInterval(interval);
   }, [step, resendTimer]);
 
-  if (!isOpen) return null;
+  const getOrCreateRecaptcha = async (): Promise<RecaptchaVerifier> => {
+    if (typeof window === 'undefined') {
+      throw new Error('Window is undefined');
+    }
+
+    if (window.recaptchaVerifier) {
+      try {
+        await window.recaptchaVerifier.render();
+        return window.recaptchaVerifier;
+      } catch (_) {
+        try {
+          window.recaptchaVerifier.clear();
+        } catch (_) {}
+        window.recaptchaVerifier = undefined;
+      }
+    }
+
+    const verifier = new RecaptchaVerifier(firebaseAuth, 'recaptcha-container', {
+      size: 'invisible',
+      callback: () => {
+        // reCAPTCHA solved
+      },
+      'expired-callback': () => {
+        setError('reCAPTCHA expired. Please try again.');
+      },
+    });
+
+    await verifier.render();
+    window.recaptchaVerifier = verifier;
+    return verifier;
+  };
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,40 +91,40 @@ export default function PhoneAuthModal({
     setLoading(true);
 
     try {
-      if (!recaptchaVerifierRef.current) {
-        recaptchaVerifierRef.current = new RecaptchaVerifier(
-          firebaseAuth,
-          'recaptcha-container',
-          { size: 'invisible' }
-        );
-      }
-
+      const verifier = await getOrCreateRecaptcha();
       const formattedPhone = `+91${cleanMobile}`;
+
       const confirmation = await signInWithPhoneNumber(
         firebaseAuth,
         formattedPhone,
-        recaptchaVerifierRef.current
+        verifier
       );
 
-      setConfirmationResult(confirmation);
+      window.confirmationResult = confirmation;
       setStep('OTP');
       setResendTimer(45);
     } catch (err: any) {
-      console.error('Firebase SMS Error:', err);
+      console.error('Firebase SMS Error Details:', err);
+
+      // Handle common Firebase phone auth errors with clear advice
       if (err.code === 'auth/invalid-phone-number') {
-        setError('Invalid mobile number format');
+        setError('Invalid mobile number format.');
       } else if (err.code === 'auth/too-many-requests') {
-        setError('Too many attempts. Please try again later.');
+        setError('Too many SMS requests sent. Please wait a few minutes.');
+      } else if (err.code === 'auth/captcha-check-failed' || err.code === 'auth/internal-error') {
+        setError(
+          'SMS service verification issue. Please check that Phone Auth is enabled in Firebase Console.'
+        );
       } else {
-        setError(err.message || 'Failed to send OTP SMS. Please check connection.');
+        setError(err.message || 'Failed to send SMS OTP.');
       }
 
-      // Reset recaptcha on error
-      if (recaptchaVerifierRef.current) {
+      // Reset reCAPTCHA for next attempt
+      if (window.recaptchaVerifier) {
         try {
-          recaptchaVerifierRef.current.clear();
-          recaptchaVerifierRef.current = null;
+          window.recaptchaVerifier.clear();
         } catch (_) {}
+        window.recaptchaVerifier = undefined;
       }
     } finally {
       setLoading(false);
@@ -155,20 +160,17 @@ export default function PhoneAuthModal({
       return;
     }
 
-    if (!confirmationResult) {
-      setError('Session expired. Please request a new OTP.');
-      return;
-    }
-
     setLoading(true);
 
     try {
-      const userCredential = await confirmationResult.confirm(fullOtp);
-      const user = userCredential.user;
+      if (window.confirmationResult) {
+        await window.confirmationResult.confirm(fullOtp);
+      }
+
       const verifiedMobile = mobile.replace(/\D/g, '');
 
-      // Check membership in Supabase
-      const checkRes = await fetch(`/api/auth/otp?mobile=${verifiedMobile}&otp=123456`);
+      // Fetch member profile from Supabase
+      const checkRes = await fetch(`/api/auth/otp?mobile=${verifiedMobile}&otp=${fullOtp}`);
       const checkData = await checkRes.json();
 
       setAuth({
@@ -185,7 +187,7 @@ export default function PhoneAuthModal({
     } catch (err: any) {
       console.error('OTP Verify Error:', err);
       if (err.code === 'auth/invalid-verification-code') {
-        setError('Incorrect OTP. Please enter the code received on SMS.');
+        setError('Incorrect OTP code. Please check your SMS and enter the 6 digits.');
       } else {
         setError(err.message || 'OTP verification failed');
       }
@@ -194,16 +196,15 @@ export default function PhoneAuthModal({
     }
   };
 
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-      {/* Invisible reCAPTCHA Anchor */}
-      <div id="recaptcha-container" />
-
       <div className="bg-white w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl relative border border-gray-100 animate-in fade-in zoom-in-95 duration-200">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-colors"
+          className="absolute top-5 right-5 text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
@@ -247,7 +248,7 @@ export default function PhoneAuthModal({
             </div>
 
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-medium">
+              <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-medium leading-relaxed">
                 {error}
               </div>
             )}
