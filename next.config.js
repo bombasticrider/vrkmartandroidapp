@@ -48,7 +48,8 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https://negwlhxaovotdtihcpul.supabase.co https://cdn.dmart.in https://www.gstatic.com https://www.google.com",
-              "connect-src 'self' https://negwlhxaovotdtihcpul.supabase.co https://api.phonepe.com wss://realtime.supabase.co https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.firebaseio.com https://www.google.com/recaptcha/ https://*.vercel-insights.com",
+              "connect-src 'self' https://negwlhxaovotdtihcpul.supabase.co https://api.phonepe.com wss://realtime.supabase.co https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.firebaseio.com https://www.google.com/recaptcha/ https://*.vercel-insights.com https://api.bigdatacloud.net",
+
               "frame-src 'self' https://www.google.com/recaptcha/ https://recaptcha.google.com/ https://vrkmartandroid.firebaseapp.com",
               "frame-ancestors 'none'",
               "base-uri 'self'",
