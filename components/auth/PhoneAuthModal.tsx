@@ -30,59 +30,53 @@ export default function PhoneAuthModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [resendTimer, setResendTimer] = useState(30);
-  const [recaptchaReady, setRecaptchaReady] = useState(false);
 
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { setAuth } = useAuthStore();
 
-  // Initialize reCAPTCHA inside the modal when opened
+  // Initialize reCAPTCHA once when modal opens
   useEffect(() => {
     if (!isOpen) return;
 
-    const timer = setTimeout(() => {
+    let isMounted = true;
+
+    const initVerifier = async () => {
       try {
-        if (typeof window !== 'undefined' && document.getElementById('modal-recaptcha')) {
-          if (window.recaptchaVerifier) {
-            try {
-              window.recaptchaVerifier.clear();
-            } catch (_) {}
-          }
+        if (typeof window === 'undefined') return;
+        const container = document.getElementById('modal-recaptcha');
+        if (!container) return;
 
-          window.recaptchaVerifier = new RecaptchaVerifier(
-            firebaseAuth,
-            'modal-recaptcha',
-            {
-              size: 'normal',
-              callback: () => {
-                setRecaptchaReady(true);
-                setError('');
-              },
-              'expired-callback': () => {
-                setRecaptchaReady(false);
-                setError('reCAPTCHA expired. Please tick the checkbox again.');
-              },
-            }
-          );
+        if (window.recaptchaVerifier) {
+          try {
+            window.recaptchaVerifier.clear();
+          } catch (_) {}
+          window.recaptchaVerifier = undefined;
+        }
 
-          window.recaptchaVerifier.render().then(() => {
-            setRecaptchaReady(true);
-          }).catch((err) => {
-            console.error('reCAPTCHA render error:', err);
-          });
+        const verifier = new RecaptchaVerifier(firebaseAuth, 'modal-recaptcha', {
+          size: 'normal',
+          callback: () => {
+            if (isMounted) setError('');
+          },
+          'expired-callback': () => {
+            if (isMounted) setError('reCAPTCHA expired. Please verify the checkbox again.');
+          },
+        });
+
+        await verifier.render();
+        if (isMounted) {
+          window.recaptchaVerifier = verifier;
         }
       } catch (err: any) {
         console.error('reCAPTCHA setup error:', err);
       }
-    }, 400);
+    };
+
+    const timer = setTimeout(initVerifier, 300);
 
     return () => {
+      isMounted = false;
       clearTimeout(timer);
-      if (window.recaptchaVerifier) {
-        try {
-          window.recaptchaVerifier.clear();
-          window.recaptchaVerifier = undefined;
-        } catch (_) {}
-      }
     };
   }, [isOpen]);
 
@@ -110,7 +104,7 @@ export default function PhoneAuthModal({
     }
 
     if (!window.recaptchaVerifier) {
-      setError('Please tick the reCAPTCHA checkbox below first.');
+      setError('Please complete the "I\'m not a robot" check below first.');
       return;
     }
 
@@ -233,121 +227,128 @@ export default function PhoneAuthModal({
           </p>
         </div>
 
-        {/* Step 1: Phone Number */}
-        {step === 'PHONE' ? (
-          <form onSubmit={handleSendOtp} className="space-y-4">
-            <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
-                Mobile Number
-              </label>
-              <div className="flex items-center border-2 border-gray-200 rounded-2xl overflow-hidden focus-within:border-[#1E3A8A] transition-colors">
-                <span className="bg-gray-50 px-4 py-3.5 text-gray-600 font-bold text-sm border-r border-gray-200">
-                  🇮🇳 +91
-                </span>
+        {/* Step 1: Phone Number (Kept rendered to maintain reCAPTCHA DOM element) */}
+        <form
+          onSubmit={handleSendOtp}
+          className={`space-y-4 ${step === 'PHONE' ? 'block' : 'hidden'}`}
+        >
+          <div>
+            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+              Mobile Number
+            </label>
+            <div className="flex items-center border-2 border-gray-200 rounded-2xl overflow-hidden focus-within:border-[#1E3A8A] transition-colors">
+              <span className="bg-gray-50 px-4 py-3.5 text-gray-600 font-bold text-sm border-r border-gray-200">
+                🇮🇳 +91
+              </span>
+              <input
+                type="tel"
+                maxLength={10}
+                autoFocus
+                placeholder="Enter 10-digit number"
+                value={mobile}
+                onChange={(e) => setMobile(e.target.value.replace(/\D/g, ''))}
+                className="w-full px-4 py-3.5 text-base font-semibold text-gray-900 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Persistent reCAPTCHA Container */}
+          <div className="flex justify-center my-3 overflow-hidden rounded-xl">
+            <div id="modal-recaptcha"></div>
+          </div>
+
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-medium leading-relaxed">
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading || mobile.length !== 10}
+            className="w-full bg-[#1E3A8A] hover:bg-blue-900 active:scale-95 text-white py-3.5 rounded-2xl font-bold text-sm shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+          >
+            {loading ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <>
+                <span>Send SMS OTP</span>
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
+          </button>
+        </form>
+
+        {/* Step 2: OTP Verification */}
+        <form
+          onSubmit={handleVerifyOtp}
+          className={`space-y-5 ${step === 'OTP' ? 'block' : 'hidden'}`}
+        >
+          <div>
+            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-3 text-center">
+              Enter 6-Digit OTP
+            </label>
+            <div className="flex gap-2 justify-center">
+              {otp.map((digit, idx) => (
                 <input
-                  type="tel"
-                  maxLength={10}
-                  autoFocus
-                  placeholder="Enter 10-digit number"
-                  value={mobile}
-                  onChange={(e) => setMobile(e.target.value.replace(/\D/g, ''))}
-                  className="w-full px-4 py-3.5 text-base font-semibold text-gray-900 focus:outline-none"
+                  key={idx}
+                  ref={(el) => {
+                    otpInputRefs.current[idx] = el;
+                  }}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleOtpChange(idx, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(idx, e)}
+                  className="w-11 h-12 text-center text-xl font-extrabold text-gray-900 border-2 border-gray-200 rounded-xl focus:border-[#1E3A8A] focus:ring-2 focus:ring-blue-100 outline-none transition-all"
                 />
-              </div>
+              ))}
             </div>
+          </div>
 
-            {/* Visible reCAPTCHA Container */}
-            <div className="flex justify-center my-3 overflow-hidden rounded-xl">
-              <div id="modal-recaptcha"></div>
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-medium text-center">
+              {error}
             </div>
+          )}
 
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-medium leading-relaxed">
-                {error}
-              </div>
+          <button
+            type="submit"
+            disabled={loading || otp.join('').length !== 6}
+            className="w-full bg-[#10B981] hover:bg-emerald-600 active:scale-95 text-white py-3.5 rounded-2xl font-bold text-sm shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+          >
+            {loading ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              'Verify & Log In'
             )}
+          </button>
 
+          <div className="flex items-center justify-between text-xs text-gray-500 pt-2">
             <button
-              type="submit"
-              disabled={loading || mobile.length !== 10}
-              className="w-full bg-[#1E3A8A] hover:bg-blue-900 active:scale-95 text-white py-3.5 rounded-2xl font-bold text-sm shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+              type="button"
+              onClick={() => {
+                setStep('PHONE');
+                setError('');
+              }}
+              className="text-[#1E3A8A] font-semibold hover:underline cursor-pointer"
             >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <>
-                  <span>Send SMS OTP</span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
+              Change Number
             </button>
-          </form>
-        ) : (
-          /* Step 2: OTP Verification */
-          <form onSubmit={handleVerifyOtp} className="space-y-5">
-            <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-3 text-center">
-                Enter 6-Digit OTP
-              </label>
-              <div className="flex gap-2 justify-center">
-                {otp.map((digit, idx) => (
-                  <input
-                    key={idx}
-                    ref={(el) => {
-                      otpInputRefs.current[idx] = el;
-                    }}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handleOtpChange(idx, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(idx, e)}
-                    className="w-11 h-12 text-center text-xl font-extrabold text-gray-900 border-2 border-gray-200 rounded-xl focus:border-[#1E3A8A] focus:ring-2 focus:ring-blue-100 outline-none transition-all"
-                  />
-                ))}
-              </div>
-            </div>
-
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-medium text-center">
-                {error}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading || otp.join('').length !== 6}
-              className="w-full bg-[#10B981] hover:bg-emerald-600 active:scale-95 text-white py-3.5 rounded-2xl font-bold text-sm shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
-            >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                'Verify & Log In'
-              )}
-            </button>
-
-            <div className="flex items-center justify-between text-xs text-gray-500 pt-2">
+            {resendTimer > 0 ? (
+              <span>Resend in {resendTimer}s</span>
+            ) : (
               <button
                 type="button"
-                onClick={() => setStep('PHONE')}
-                className="text-[#1E3A8A] font-semibold hover:underline cursor-pointer"
+                onClick={handleSendOtp}
+                className="text-[#1E3A8A] font-semibold flex items-center gap-1 hover:underline cursor-pointer"
               >
-                Change Number
+                <RotateCcw className="w-3 h-3" /> Resend OTP
               </button>
-              {resendTimer > 0 ? (
-                <span>Resend in {resendTimer}s</span>
-              ) : (
-                <button
-                  type="button"
-                  onClick={handleSendOtp}
-                  className="text-[#1E3A8A] font-semibold flex items-center gap-1 hover:underline cursor-pointer"
-                >
-                  <RotateCcw className="w-3 h-3" /> Resend OTP
-                </button>
-              )}
-            </div>
-          </form>
-        )}
+            )}
+          </div>
+        </form>
       </div>
     </div>
   );
