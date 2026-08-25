@@ -5,10 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-// Pincode validator: only 560xxx Bengaluru pincodes are serviceable
+// Pincode validator: 560xxx (Core Bengaluru) + 562xxx (Hoskote, Anekal, Devanahalli, Nelamangala, Bidadi)
 export function isBengaluruPincode(pincode: string): boolean {
-  return /^560\d{3}$/.test(pincode);
+  return /^(560|562)\d{3}$/.test(pincode.trim());
 }
+
 
 // Format currency: 1500 -> '₹1,500'
 export function formatCurrency(amount: number): string {
