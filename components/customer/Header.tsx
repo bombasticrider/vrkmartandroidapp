@@ -30,10 +30,10 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#1E3A8A] text-white shadow-md pt-safe">
-      <div className="flex items-center justify-between px-4 h-16 max-w-6xl mx-auto">
-        {/* Left: Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <div className="relative w-32 h-8">
+      <div className="flex items-center justify-between px-3 sm:px-4 h-16 max-w-6xl mx-auto gap-2">
+        {/* Left: Logo (Never shrinks, responsive sizing) */}
+        <Link href="/" className="shrink-0 flex items-center">
+          <div className="relative w-24 sm:w-32 h-7 sm:h-8">
             <Image
               src="/icons/header-logo.png"
               alt="VRK Mart Logo"
@@ -44,33 +44,33 @@ export default function Header() {
           </div>
         </Link>
 
-        {/* Center: Interactive Location Chip */}
+        {/* Center: Flexible Interactive Location Chip (Truncates gracefully) */}
         <button
           onClick={openModal}
-          className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 active:scale-95 transition-all px-3.5 py-1.5 rounded-full text-xs font-semibold max-w-[170px] sm:max-w-[240px] border border-white/10 cursor-pointer shadow-inner"
+          className="flex items-center gap-1 sm:gap-1.5 bg-white/10 hover:bg-white/20 active:scale-95 transition-all px-2.5 sm:px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-semibold max-w-[125px] sm:max-w-[220px] shrink min-w-0 border border-white/10 cursor-pointer shadow-inner"
         >
-          <MapPin size={14} className="text-[#F59E0B] shrink-0" />
+          <MapPin size={13} className="text-[#F59E0B] shrink-0" />
           <span className="truncate">{displayLocation}</span>
-          <ChevronDown size={12} className="text-white/60 shrink-0" />
+          <ChevronDown size={11} className="text-white/60 shrink-0" />
         </button>
 
-        {/* Right: Actions */}
-        <div className="flex items-center gap-3 sm:gap-4">
+        {/* Right: Actions (Never shrinks or gets pushed out) */}
+        <div className="shrink-0 flex items-center gap-2 sm:gap-3">
           <Link
             href="/search"
-            className="p-1.5 hover:bg-white/10 rounded-full transition-colors"
+            className="p-1.5 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center"
             aria-label="Search products"
           >
-            <Search size={22} />
+            <Search size={20} className="sm:w-[22px] sm:h-[22px]" />
           </Link>
           <button
-            className="p-1.5 relative hover:bg-white/10 rounded-full transition-colors cursor-pointer"
+            className="p-1.5 relative hover:bg-white/10 rounded-full transition-colors cursor-pointer flex items-center justify-center"
             onClick={() => setCartOpen(true)}
             aria-label="Open shopping cart"
           >
-            <ShoppingCart size={22} />
+            <ShoppingCart size={20} className="sm:w-[22px] sm:h-[22px]" />
             {cartItemCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-[#10B981] text-white text-[10px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#1E3A8A] shadow">
+              <span className="absolute -top-1 -right-1 bg-[#10B981] text-white text-[10px] font-extrabold w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full flex items-center justify-center border-2 border-[#1E3A8A] shadow">
                 {cartItemCount > 99 ? '99+' : cartItemCount}
               </span>
             )}
