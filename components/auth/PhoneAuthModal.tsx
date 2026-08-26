@@ -9,9 +9,7 @@ import { ShieldCheck, X, ArrowRight, RotateCcw } from 'lucide-react';
 declare global {
   interface Window {
     recaptchaVerifier?: RecaptchaVerifier;
-    recaptchaWidgetId?: number;
     confirmationResult?: ConfirmationResult;
-    grecaptcha?: any;
   }
 }
 
@@ -36,65 +34,51 @@ export default function PhoneAuthModal({
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { setAuth } = useAuthStore();
 
-  // Helper to safely reset reCAPTCHA widget
-  const resetRecaptcha = () => {
-    try {
-      if (typeof window !== 'undefined' && window.grecaptcha && window.recaptchaWidgetId !== undefined) {
-        window.grecaptcha.reset(window.recaptchaWidgetId);
-      }
-    } catch (e) {
-      console.warn('Could not reset grecaptcha:', e);
+  // Helper to create / refresh invisible RecaptchaVerifier
+  const getOrCreateVerifier = () => {
+    if (typeof window === 'undefined') return null;
+
+    if (window.recaptchaVerifier) {
+      try {
+        window.recaptchaVerifier.clear();
+      } catch (_) {}
+      window.recaptchaVerifier = undefined;
     }
+
+    const container = document.getElementById('modal-recaptcha');
+    if (!container) return null;
+
+    const verifier = new RecaptchaVerifier(firebaseAuth, 'modal-recaptcha', {
+      size: 'invisible',
+      callback: () => {
+        // reCAPTCHA solved automatically
+        setError('');
+      },
+      'expired-callback': () => {
+        setError('Security verification timed out. Please try sending OTP again.');
+      },
+    });
+
+    window.recaptchaVerifier = verifier;
+    return verifier;
   };
 
-  // Initialize reCAPTCHA verifier
+  // Initialize invisible reCAPTCHA on modal open
   useEffect(() => {
     if (!isOpen) return;
 
-    let isMounted = true;
-
-    const setupVerifier = async () => {
-      try {
-        if (typeof window === 'undefined') return;
-        const container = document.getElementById('modal-recaptcha');
-        if (!container) return;
-
-        // Clean up previous instance if any
-        if (window.recaptchaVerifier) {
-          try {
-            window.recaptchaVerifier.clear();
-          } catch (_) {}
-          window.recaptchaVerifier = undefined;
-        }
-
-        const verifier = new RecaptchaVerifier(firebaseAuth, 'modal-recaptcha', {
-          size: 'normal',
-          callback: () => {
-            if (isMounted) setError('');
-          },
-          'expired-callback': () => {
-            if (isMounted) {
-              setError('reCAPTCHA verification expired. Please check the box again.');
-              resetRecaptcha();
-            }
-          },
-        });
-
-        const widgetId = await verifier.render();
-        if (isMounted) {
-          window.recaptchaVerifier = verifier;
-          window.recaptchaWidgetId = widgetId;
-        }
-      } catch (err: any) {
-        console.error('reCAPTCHA init error:', err);
-      }
-    };
-
-    const timer = setTimeout(setupVerifier, 250);
+    const timer = setTimeout(() => {
+      getOrCreateVerifier();
+    }, 200);
 
     return () => {
-      isMounted = false;
       clearTimeout(timer);
+      if (window.recaptchaVerifier) {
+        try {
+          window.recaptchaVerifier.clear();
+        } catch (_) {}
+        window.recaptchaVerifier = undefined;
+      }
     };
   }, [isOpen]);
 
@@ -121,19 +105,20 @@ export default function PhoneAuthModal({
       return;
     }
 
-    if (!window.recaptchaVerifier) {
-      setError('Initializing security check. Please wait a moment and try again.');
-      return;
-    }
-
     setLoading(true);
 
     try {
+      // Get fresh invisible verifier
+      const verifier = getOrCreateVerifier();
+      if (!verifier) {
+        throw new Error('Security verifier initializing. Please try again.');
+      }
+
       const formattedPhone = `+91${cleanMobile}`;
       const confirmation = await signInWithPhoneNumber(
         firebaseAuth,
         formattedPhone,
-        window.recaptchaVerifier
+        verifier
       );
 
       window.confirmationResult = confirmation;
@@ -142,17 +127,17 @@ export default function PhoneAuthModal({
     } catch (err: any) {
       console.error('Firebase SMS Error Details:', err);
 
-      // Auto-reset reCAPTCHA widget on failure so fresh token can be obtained
-      resetRecaptcha();
+      // Re-initialize verifier on error so subsequent attempts get a fresh token
+      getOrCreateVerifier();
 
       if (err.code === 'auth/invalid-phone-number') {
         setError('Invalid mobile number format.');
       } else if (err.code === 'auth/too-many-requests') {
-        setError('Too many SMS attempts. Please wait a few minutes before trying again.');
+        setError('Too many SMS attempts for this number. Please wait 10 minutes or try an alternate number.');
       } else if (err.code === 'auth/invalid-recaptcha-token' || err.code === 'auth/captcha-check-failed') {
-        setError('Security check token expired. Please tick the "I am not a robot" box again.');
+        setError('Security check token refreshed. Please tap "Send SMS OTP" again.');
       } else if (err.code === 'auth/unauthorized-domain') {
-        setError('Domain not authorized in Firebase Console. Please add vrkmartandroidapp.vercel.app to Authorized Domains.');
+        setError('Domain not authorized in Firebase Console (Add vrkmartandroidapp.vercel.app in Authentication > Settings).');
       } else {
         setError(`${err.message || 'Failed to send SMS OTP'} (${err.code || 'error'})`);
       }
@@ -252,7 +237,7 @@ export default function PhoneAuthModal({
           </p>
         </div>
 
-        {/* Step 1: Phone Number (Kept rendered to maintain reCAPTCHA DOM element) */}
+        {/* Step 1: Phone Number */}
         <form
           onSubmit={handleSendOtp}
           className={`space-y-4 ${step === 'PHONE' ? 'block' : 'hidden'}`}
@@ -277,10 +262,8 @@ export default function PhoneAuthModal({
             </div>
           </div>
 
-          {/* Persistent reCAPTCHA Container */}
-          <div className="flex justify-center my-3 overflow-hidden rounded-xl">
-            <div id="modal-recaptcha"></div>
-          </div>
+          {/* Invisible reCAPTCHA container */}
+          <div id="modal-recaptcha"></div>
 
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-medium leading-relaxed">
@@ -302,6 +285,10 @@ export default function PhoneAuthModal({
               </>
             )}
           </button>
+
+          <p className="text-[11px] text-gray-400 text-center">
+            🔒 Protected by Google Security. Zero SMS spam.
+          </p>
         </form>
 
         {/* Step 2: OTP Verification */}
@@ -356,7 +343,7 @@ export default function PhoneAuthModal({
               onClick={() => {
                 setStep('PHONE');
                 setError('');
-                resetRecaptcha();
+                getOrCreateVerifier();
               }}
               className="text-[#1E3A8A] font-semibold hover:underline cursor-pointer"
             >
