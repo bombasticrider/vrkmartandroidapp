@@ -9,7 +9,9 @@ import { ShieldCheck, X, ArrowRight, RotateCcw } from 'lucide-react';
 declare global {
   interface Window {
     recaptchaVerifier?: RecaptchaVerifier;
+    recaptchaWidgetId?: number;
     confirmationResult?: ConfirmationResult;
+    grecaptcha?: any;
   }
 }
 
@@ -34,18 +36,30 @@ export default function PhoneAuthModal({
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { setAuth } = useAuthStore();
 
-  // Initialize reCAPTCHA once when modal opens
+  // Helper to safely reset reCAPTCHA widget
+  const resetRecaptcha = () => {
+    try {
+      if (typeof window !== 'undefined' && window.grecaptcha && window.recaptchaWidgetId !== undefined) {
+        window.grecaptcha.reset(window.recaptchaWidgetId);
+      }
+    } catch (e) {
+      console.warn('Could not reset grecaptcha:', e);
+    }
+  };
+
+  // Initialize reCAPTCHA verifier
   useEffect(() => {
     if (!isOpen) return;
 
     let isMounted = true;
 
-    const initVerifier = async () => {
+    const setupVerifier = async () => {
       try {
         if (typeof window === 'undefined') return;
         const container = document.getElementById('modal-recaptcha');
         if (!container) return;
 
+        // Clean up previous instance if any
         if (window.recaptchaVerifier) {
           try {
             window.recaptchaVerifier.clear();
@@ -59,20 +73,24 @@ export default function PhoneAuthModal({
             if (isMounted) setError('');
           },
           'expired-callback': () => {
-            if (isMounted) setError('reCAPTCHA expired. Please verify the checkbox again.');
+            if (isMounted) {
+              setError('reCAPTCHA verification expired. Please check the box again.');
+              resetRecaptcha();
+            }
           },
         });
 
-        await verifier.render();
+        const widgetId = await verifier.render();
         if (isMounted) {
           window.recaptchaVerifier = verifier;
+          window.recaptchaWidgetId = widgetId;
         }
       } catch (err: any) {
-        console.error('reCAPTCHA setup error:', err);
+        console.error('reCAPTCHA init error:', err);
       }
     };
 
-    const timer = setTimeout(initVerifier, 300);
+    const timer = setTimeout(setupVerifier, 250);
 
     return () => {
       isMounted = false;
@@ -104,7 +122,7 @@ export default function PhoneAuthModal({
     }
 
     if (!window.recaptchaVerifier) {
-      setError('Please complete the "I\'m not a robot" check below first.');
+      setError('Initializing security check. Please wait a moment and try again.');
       return;
     }
 
@@ -124,10 +142,17 @@ export default function PhoneAuthModal({
     } catch (err: any) {
       console.error('Firebase SMS Error Details:', err);
 
+      // Auto-reset reCAPTCHA widget on failure so fresh token can be obtained
+      resetRecaptcha();
+
       if (err.code === 'auth/invalid-phone-number') {
         setError('Invalid mobile number format.');
       } else if (err.code === 'auth/too-many-requests') {
-        setError('Too many SMS requests sent. Please wait a few minutes.');
+        setError('Too many SMS attempts. Please wait a few minutes before trying again.');
+      } else if (err.code === 'auth/invalid-recaptcha-token' || err.code === 'auth/captcha-check-failed') {
+        setError('Security check token expired. Please tick the "I am not a robot" box again.');
+      } else if (err.code === 'auth/unauthorized-domain') {
+        setError('Domain not authorized in Firebase Console. Please add vrkmartandroidapp.vercel.app to Authorized Domains.');
       } else {
         setError(`${err.message || 'Failed to send SMS OTP'} (${err.code || 'error'})`);
       }
@@ -331,6 +356,7 @@ export default function PhoneAuthModal({
               onClick={() => {
                 setStep('PHONE');
                 setError('');
+                resetRecaptcha();
               }}
               className="text-[#1E3A8A] font-semibold hover:underline cursor-pointer"
             >
