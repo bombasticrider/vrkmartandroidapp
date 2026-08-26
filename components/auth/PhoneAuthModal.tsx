@@ -19,6 +19,38 @@ interface PhoneAuthModalProps {
   onSuccess?: () => void;
 }
 
+// Global helper to get or create root RecaptchaVerifier attached to root #recaptcha-container
+function getRootRecaptchaVerifier(): RecaptchaVerifier | null {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    if (!window.recaptchaVerifier) {
+      const container = document.getElementById('recaptcha-container');
+      if (!container) return null;
+
+      window.recaptchaVerifier = new RecaptchaVerifier(firebaseAuth, 'recaptcha-container', {
+        size: 'invisible',
+        callback: () => {
+          console.log('Root invisible reCAPTCHA solved');
+        },
+      });
+    }
+    return window.recaptchaVerifier;
+  } catch (err) {
+    console.error('Error creating root RecaptchaVerifier:', err);
+    return null;
+  }
+}
+
+function resetRootRecaptchaVerifier() {
+  if (typeof window !== 'undefined' && window.recaptchaVerifier) {
+    try {
+      window.recaptchaVerifier.clear();
+    } catch (_) {}
+    window.recaptchaVerifier = undefined;
+  }
+}
+
 export default function PhoneAuthModal({
   isOpen,
   onClose,
@@ -34,52 +66,11 @@ export default function PhoneAuthModal({
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { setAuth } = useAuthStore();
 
-  // Helper to create / refresh invisible RecaptchaVerifier
-  const getOrCreateVerifier = () => {
-    if (typeof window === 'undefined') return null;
-
-    if (window.recaptchaVerifier) {
-      try {
-        window.recaptchaVerifier.clear();
-      } catch (_) {}
-      window.recaptchaVerifier = undefined;
-    }
-
-    const container = document.getElementById('modal-recaptcha');
-    if (!container) return null;
-
-    const verifier = new RecaptchaVerifier(firebaseAuth, 'modal-recaptcha', {
-      size: 'invisible',
-      callback: () => {
-        // reCAPTCHA solved automatically
-        setError('');
-      },
-      'expired-callback': () => {
-        setError('Security verification timed out. Please try sending OTP again.');
-      },
-    });
-
-    window.recaptchaVerifier = verifier;
-    return verifier;
-  };
-
-  // Initialize invisible reCAPTCHA on modal open
+  // Initialize verifier once on mount
   useEffect(() => {
-    if (!isOpen) return;
-
-    const timer = setTimeout(() => {
-      getOrCreateVerifier();
-    }, 200);
-
-    return () => {
-      clearTimeout(timer);
-      if (window.recaptchaVerifier) {
-        try {
-          window.recaptchaVerifier.clear();
-        } catch (_) {}
-        window.recaptchaVerifier = undefined;
-      }
-    };
+    if (isOpen) {
+      getRootRecaptchaVerifier();
+    }
   }, [isOpen]);
 
   // Resend countdown timer
@@ -108,10 +99,14 @@ export default function PhoneAuthModal({
     setLoading(true);
 
     try {
-      // Get fresh invisible verifier
-      const verifier = getOrCreateVerifier();
+      let verifier = getRootRecaptchaVerifier();
       if (!verifier) {
-        throw new Error('Security verifier initializing. Please try again.');
+        resetRootRecaptchaVerifier();
+        verifier = getRootRecaptchaVerifier();
+      }
+
+      if (!verifier) {
+        throw new Error('Security check initializing. Please tap again in a moment.');
       }
 
       const formattedPhone = `+91${cleanMobile}`;
@@ -127,15 +122,15 @@ export default function PhoneAuthModal({
     } catch (err: any) {
       console.error('Firebase SMS Error Details:', err);
 
-      // Re-initialize verifier on error so subsequent attempts get a fresh token
-      getOrCreateVerifier();
+      // Reset verifier so next attempt gets a completely fresh token
+      resetRootRecaptchaVerifier();
 
       if (err.code === 'auth/invalid-phone-number') {
         setError('Invalid mobile number format.');
       } else if (err.code === 'auth/too-many-requests') {
-        setError('Too many SMS attempts for this number. Please wait 10 minutes or try an alternate number.');
+        setError('Too many SMS requests sent. Please wait a few minutes before trying again.');
       } else if (err.code === 'auth/invalid-recaptcha-token' || err.code === 'auth/captcha-check-failed') {
-        setError('Security check token refreshed. Please tap "Send SMS OTP" again.');
+        setError('Google security token refreshed. Please tap "Send SMS OTP" once more.');
       } else if (err.code === 'auth/unauthorized-domain') {
         setError('Domain not authorized in Firebase Console (Add vrkmartandroidapp.vercel.app in Authentication > Settings).');
       } else {
@@ -262,9 +257,6 @@ export default function PhoneAuthModal({
             </div>
           </div>
 
-          {/* Invisible reCAPTCHA container */}
-          <div id="modal-recaptcha"></div>
-
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-medium leading-relaxed">
               {error}
@@ -343,7 +335,7 @@ export default function PhoneAuthModal({
               onClick={() => {
                 setStep('PHONE');
                 setError('');
-                getOrCreateVerifier();
+                resetRootRecaptchaVerifier();
               }}
               className="text-[#1E3A8A] font-semibold hover:underline cursor-pointer"
             >
