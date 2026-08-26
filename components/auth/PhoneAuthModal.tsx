@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from 'firebase/auth';
 import { firebaseAuth } from '@/lib/firebase';
 import { useAuthStore } from '@/store/useAuthStore';
-import { ShieldCheck, X, ArrowRight, RotateCcw } from 'lucide-react';
+import { ShieldCheck, X, ArrowRight, RotateCcw, User, MapPin, Sparkles } from 'lucide-react';
 
 declare global {
   interface Window {
@@ -58,7 +58,9 @@ export default function PhoneAuthModal({
 }: PhoneAuthModalProps) {
   const [mobile, setMobile] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [step, setStep] = useState<'PHONE' | 'OTP'>('PHONE');
+  const [step, setStep] = useState<'PHONE' | 'OTP' | 'PROFILE_SETUP'>('PHONE');
+  const [fullName, setFullName] = useState('');
+  const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [resendTimer, setResendTimer] = useState(30);
@@ -122,7 +124,6 @@ export default function PhoneAuthModal({
     } catch (err: any) {
       console.error('Firebase SMS Error Details:', err);
 
-      // Reset verifier so next attempt gets a completely fresh token
       resetRootRecaptchaVerifier();
 
       if (err.code === 'auth/invalid-phone-number') {
@@ -183,17 +184,27 @@ export default function PhoneAuthModal({
       const checkRes = await fetch(`/api/auth/otp?mobile=${verifiedMobile}&otp=${fullOtp}`);
       const checkData = await checkRes.json();
 
+      const existingName = checkData.memberData?.full_name;
+      const isFirstTime = !existingName || existingName === 'Valued Customer' || existingName.trim() === '';
+
+      // Save known auth data to store
       setAuth({
         mobile: verifiedMobile,
         isVerified: true,
         isMember: checkData.isMember || false,
         vrkId: checkData.memberData?.vrk_id || null,
-        memberName: checkData.memberData?.full_name || 'Valued Customer',
+        memberName: existingName || 'Valued Customer',
+        address: checkData.memberData?.permanent_address?.line1 || null,
         memberData: checkData.memberData || null,
       });
 
-      onSuccess?.();
-      onClose();
+      if (isFirstTime) {
+        // Transition to First-time onboarding step
+        setStep('PROFILE_SETUP');
+      } else {
+        onSuccess?.();
+        onClose();
+      }
     } catch (err: any) {
       console.error('OTP Verify Error:', err);
       if (err.code === 'auth/invalid-verification-code') {
@@ -201,6 +212,49 @@ export default function PhoneAuthModal({
       } else {
         setError(err.message || 'OTP verification failed');
       }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!fullName.trim()) {
+      setError('Please enter your full name');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const verifiedMobile = mobile.replace(/\D/g, '');
+      await fetch('/api/customer/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mobile: verifiedMobile,
+          fullName: fullName.trim(),
+          address: address.trim(),
+        }),
+      });
+
+      setAuth({
+        memberName: fullName.trim(),
+        address: address.trim() || null,
+      });
+
+      onSuccess?.();
+      onClose();
+    } catch (err) {
+      console.error('Profile save error:', err);
+      // Even if API fails, update local state and proceed
+      setAuth({
+        memberName: fullName.trim(),
+        address: address.trim() || null,
+      });
+      onSuccess?.();
+      onClose();
     } finally {
       setLoading(false);
     }
@@ -220,15 +274,25 @@ export default function PhoneAuthModal({
         {/* Branding */}
         <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-50 text-[#1E3A8A] rounded-2xl mb-3 shadow-inner">
-            <ShieldCheck className="w-7 h-7" />
+            {step === 'PROFILE_SETUP' ? (
+              <Sparkles className="w-7 h-7 text-[#F59E0B]" />
+            ) : (
+              <ShieldCheck className="w-7 h-7" />
+            )}
           </div>
           <h2 className="text-2xl font-extrabold text-[#1E3A8A]">
-            {step === 'PHONE' ? 'Sign In to VRK Mart' : 'Verify Mobile OTP'}
+            {step === 'PHONE'
+              ? 'Sign In to VRK Mart'
+              : step === 'OTP'
+              ? 'Verify Mobile OTP'
+              : 'Welcome to VRK Mart! 🎉'}
           </h2>
           <p className="text-xs text-gray-500 mt-1">
             {step === 'PHONE'
               ? 'Enter your 10-digit mobile number to receive an instant SMS OTP'
-              : `Enter the 6-digit OTP code sent via SMS to +91 ${mobile}`}
+              : step === 'OTP'
+              ? `Enter the 6-digit OTP code sent via SMS to +91 ${mobile}`
+              : 'Please enter your name & address for fast delivery'}
           </p>
         </div>
 
@@ -353,6 +417,63 @@ export default function PhoneAuthModal({
               </button>
             )}
           </div>
+        </form>
+
+        {/* Step 3: First-Time User Profile Onboarding (Blinkit Style) */}
+        <form
+          onSubmit={handleSaveProfile}
+          className={`space-y-4 ${step === 'PROFILE_SETUP' ? 'block' : 'hidden'}`}
+        >
+          <div>
+            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+              <User className="w-3.5 h-3.5 text-[#1E3A8A]" />
+              Your Full Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              required
+              autoFocus
+              placeholder="e.g. Vishesh Kumar"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl text-sm font-semibold text-gray-900 focus:border-[#1E3A8A] focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-[#1E3A8A]" />
+              Default Delivery Address
+            </label>
+            <textarea
+              rows={2}
+              placeholder="Flat / House No, Apartment, Street name"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-2xl text-xs font-medium text-gray-900 focus:border-[#1E3A8A] focus:outline-none resize-none"
+            />
+          </div>
+
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-medium">
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading || !fullName.trim()}
+            className="w-full bg-[#10B981] hover:bg-emerald-600 active:scale-95 text-white py-3.5 rounded-2xl font-bold text-sm shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+          >
+            {loading ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <>
+                <span>Complete & Start Shopping</span>
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
+          </button>
         </form>
       </div>
     </div>

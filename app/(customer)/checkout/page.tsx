@@ -21,8 +21,16 @@ export default function CheckoutPage() {
   const subtotal = getSubtotal();
   const deliveryFee = getDeliveryFee();
   const total = getTotal();
-  const { mobile, isVerified, memberName, vrkId, isMember } = useAuthStore();
+  const { mobile, isVerified, memberName, vrkId, isMember, address } = useAuthStore();
   const { pincode, isBengaluru } = useLocationStore();
+
+  // Auto-populate saved address
+  React.useEffect(() => {
+    if (address && !addressLine) {
+      setAddressLine(address);
+    }
+  }, [address]);
+
 
 
   const handlePlaceOrder = async () => {

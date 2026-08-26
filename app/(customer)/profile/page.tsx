@@ -3,12 +3,16 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import PhoneAuthModal from '@/components/auth/PhoneAuthModal';
-import { User, MapPin, Package, HelpCircle, Info, LogOut, ShieldCheck, ChevronRight, Star } from 'lucide-react';
+import { User, MapPin, Package, HelpCircle, LogOut, ShieldCheck, ChevronRight, Star, Edit2, Check } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ProfilePage() {
-  const { isVerified, mobile, memberName, vrkId, isMember, logout } = useAuthStore();
+  const { isVerified, mobile, memberName, vrkId, isMember, address, setAuth, logout } = useAuthStore();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState(memberName || '');
+  const [editAddress, setEditAddress] = useState(address || '');
+  const [saving, setSaving] = useState(false);
 
   if (!isVerified || !mobile) {
     return (
@@ -51,31 +55,122 @@ export default function ProfilePage() {
     );
   }
 
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editName.trim()) return;
+
+    setSaving(true);
+    try {
+      await fetch('/api/customer/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mobile,
+          fullName: editName.trim(),
+          address: editAddress.trim(),
+        }),
+      });
+
+      setAuth({
+        memberName: editName.trim(),
+        address: editAddress.trim() || null,
+      });
+      setIsEditing(false);
+    } catch (err) {
+      console.error('Failed to update profile:', err);
+      setAuth({
+        memberName: editName.trim(),
+        address: editAddress.trim() || null,
+      });
+      setIsEditing(false);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="py-6 max-w-xl mx-auto space-y-5 px-4 pb-24">
       {/* Member Header Card */}
-      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 flex items-center gap-4">
-        <div className="w-16 h-16 bg-blue-100/80 rounded-2xl flex items-center justify-center text-[#1E3A8A] font-extrabold text-xl shrink-0 shadow-inner">
-          {memberName ? memberName.charAt(0).toUpperCase() : 'U'}
+      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="w-16 h-16 bg-blue-100/80 rounded-2xl flex items-center justify-center text-[#1E3A8A] font-extrabold text-xl shrink-0 shadow-inner">
+            {memberName ? memberName.charAt(0).toUpperCase() : 'U'}
+          </div>
+          <div className="min-w-0">
+            <h1 className="text-lg font-extrabold text-gray-900 truncate">{memberName || 'Valued Customer'}</h1>
+            <p className="text-xs text-gray-500 font-medium">+91 {mobile}</p>
+            {vrkId ? (
+              <div className="mt-2 inline-flex items-center gap-1.5 bg-[#F59E0B]/15 text-[#1E3A8A] px-3 py-1 rounded-lg text-xs font-black border border-[#F59E0B]/30">
+                <Star className="w-3.5 h-3.5 text-[#F59E0B] fill-[#F59E0B]" />
+                {vrkId} &bull; LIFETIME MEMBER
+              </div>
+            ) : (
+              <Link
+                href="/membership/register"
+                className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-md border border-amber-200"
+              >
+                ⭐ Upgrade to Lifetime Member
+              </Link>
+            )}
+          </div>
         </div>
-        <div className="flex-1">
-          <h1 className="text-lg font-extrabold text-gray-900">{memberName || 'Valued Member'}</h1>
-          <p className="text-xs text-gray-500 font-medium">+91 {mobile}</p>
-          {vrkId ? (
-            <div className="mt-2 inline-flex items-center gap-1.5 bg-[#F59E0B]/15 text-[#1E3A8A] px-3 py-1 rounded-lg text-xs font-black border border-[#F59E0B]/30">
-              <Star className="w-3.5 h-3.5 text-[#F59E0B] fill-[#F59E0B]" />
-              {vrkId} &bull; LIFETIME MEMBER
-            </div>
-          ) : (
-            <Link
-              href="/membership/register"
-              className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-md border border-amber-200"
-            >
-              ⭐ Upgrade to Lifetime Member
-            </Link>
-          )}
-        </div>
+
+        <button
+          onClick={() => {
+            setEditName(memberName || '');
+            setEditAddress(address || '');
+            setIsEditing(!isEditing);
+          }}
+          className="p-2 text-gray-400 hover:text-[#1E3A8A] hover:bg-blue-50 rounded-xl transition-colors shrink-0"
+          title="Edit Profile"
+        >
+          <Edit2 className="w-4 h-4" />
+        </button>
       </div>
+
+      {/* Edit Profile Form Drawer */}
+      {isEditing && (
+        <form onSubmit={handleSaveProfile} className="bg-white rounded-3xl p-5 border border-blue-100 shadow-sm space-y-3 animate-in fade-in">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-[#1E3A8A]">Edit Your Details</h3>
+          <div>
+            <label className="text-[11px] font-semibold text-gray-500 block mb-1">Full Name</label>
+            <input
+              type="text"
+              required
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+              className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-[#1E3A8A] outline-none"
+            />
+          </div>
+          <div>
+            <label className="text-[11px] font-semibold text-gray-500 block mb-1">Delivery Address</label>
+            <textarea
+              rows={2}
+              value={editAddress}
+              onChange={(e) => setEditAddress(e.target.value)}
+              placeholder="Flat / House No, Apartment, Street"
+              className="w-full px-3.5 py-2 border border-gray-200 rounded-xl text-xs focus:border-[#1E3A8A] outline-none resize-none"
+            />
+          </div>
+          <div className="flex gap-2 pt-1">
+            <button
+              type="submit"
+              disabled={saving}
+              className="flex-1 bg-[#10B981] hover:bg-emerald-600 text-white font-bold text-xs py-2.5 rounded-xl shadow-sm transition-all flex items-center justify-center gap-1"
+            >
+              <Check className="w-3.5 h-3.5" />
+              <span>{saving ? 'Saving...' : 'Save Changes'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsEditing(false)}
+              className="px-4 bg-gray-100 text-gray-600 font-bold text-xs py-2.5 rounded-xl hover:bg-gray-200 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
 
       {/* Navigation Menu */}
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden divide-y divide-gray-100">
@@ -97,8 +192,15 @@ export default function ProfilePage() {
         </Link>
         <div className="w-full flex items-center p-4 hover:bg-gray-50 transition-colors">
           <MapPin className="w-5 h-5 text-gray-400 mr-3.5" />
-          <span className="flex-1 text-left font-semibold text-xs text-gray-800">Bengaluru Delivery Zone (560xxx)</span>
-          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Active</span>
+          <div className="flex-1 text-left">
+            <span className="font-semibold text-xs text-gray-800 block">Delivery Address</span>
+            <span className="text-[11px] text-gray-400 line-clamp-1">
+              {address ? `${address}, Bengaluru` : 'Bengaluru Delivery Zone (560xxx)'}
+            </span>
+          </div>
+          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+            {address ? 'Saved' : 'Active'}
+          </span>
         </div>
         <a
           href="https://wa.me/919505934045"

@@ -6,6 +6,7 @@ export interface AuthStore {
   memberId: string | null;
   vrkId: string | null;
   memberName: string | null;
+  address: string | null;
   isVerified: boolean;
   isMember: boolean;
   memberData: Record<string, unknown> | null;
@@ -18,6 +19,7 @@ const initialState = {
   memberId: null,
   vrkId: null,
   memberName: null,
+  address: null,
   isVerified: false,
   isMember: false,
   memberData: null,
