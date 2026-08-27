@@ -129,8 +129,8 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* 4 cols on mobile, 6 cols on desktop with full-bleed cards */}
-        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-6 gap-2 sm:gap-3.5">
+        {/* 4 cols on mobile, 6 cols on desktop - pure borderless .avif tiles */}
+        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-6 gap-1.5 sm:gap-2.5">
           {CATEGORY_TILES.map((cat) => (
             <Link
               key={cat.name}
@@ -138,12 +138,12 @@ export default function HomePage() {
               className="block group active:scale-95 transition-transform"
               title={cat.name}
             >
-              <div className="relative w-full aspect-[3/4] sm:aspect-square rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-gray-100 transition-all bg-[#F0F7FF]">
+              <div className="relative w-full aspect-[0.78/1] overflow-hidden">
                 <Image
                   src={cat.image}
                   alt={cat.name}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="object-contain group-hover:scale-105 transition-transform duration-200"
                 />
               </div>
             </Link>
