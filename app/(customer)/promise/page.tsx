@@ -2,17 +2,10 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Phone,
   MessageCircle,
-  Smartphone,
-  Plane,
-  Briefcase,
-  GraduationCap,
-  HeartHandshake,
-  Stethoscope,
-  ShieldAlert,
-  ShieldCheck,
   CheckCircle2,
   IndianRupee,
   Building2,
@@ -48,7 +41,7 @@ export default function PromisePage() {
             <CheckCircle2 className="w-4 h-4 text-[#10B981]" /> 100% Genuine Groceries
           </span>
           <span className="bg-white/10 px-3 py-1.5 rounded-xl backdrop-blur-xs flex items-center gap-1.5 border border-white/10">
-            <CheckCircle2 className="w-4 h-4 text-[#10B981]" /> Standard MRP Prices
+            <CheckCircle2 className="w-4 h-4 text-[#10B981]" /> Today&apos;s Market Price
           </span>
           <span className="bg-white/10 px-3 py-1.5 rounded-xl backdrop-blur-xs flex items-center gap-1.5 border border-white/10">
             <CheckCircle2 className="w-4 h-4 text-[#10B981]" /> Lifetime Family Protection
@@ -67,7 +60,6 @@ export default function PromisePage() {
               <h2 className="text-lg sm:text-xl font-extrabold text-[#1E3A8A] flex items-center gap-2">
                 LOYALTY MILESTONE REWARDS
               </h2>
-              {/* Condition Subtitle: 14px mobile, 16px desktop */}
               <p className="text-sm sm:text-base text-gray-800 mt-1 font-medium leading-relaxed">
                 Shop for <span className="font-bold text-gray-900 bg-amber-200/70 px-1.5 py-0.5 rounded">Rs 12,000 every month</span> regular Grocery, Provisions, and Household Articles continuously to unlock these exclusive benefits:
               </p>
@@ -77,72 +69,99 @@ export default function PromisePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* 6 Months */}
-          <div className="bg-white rounded-2xl p-5 border-2 border-blue-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden group">
-            <div className="absolute top-0 right-0 bg-blue-600 text-white text-xs font-black px-3 py-1 rounded-bl-xl uppercase tracking-wider">
+          <div className="bg-white rounded-3xl p-5 border-2 border-blue-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden group">
+            <div className="absolute top-0 right-0 z-10 bg-blue-600 text-white text-xs font-black px-3.5 py-1.5 rounded-bl-2xl uppercase tracking-wider shadow-sm">
               6 Months
             </div>
+
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[#1E3A8A] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <Smartphone className="w-6 h-6" />
+              {/* Hero Image */}
+              <div className="relative w-full h-44 rounded-2xl overflow-hidden mb-4 bg-gray-50 border border-gray-100 shadow-inner">
+                <Image
+                  src="/images/milestones/01_mobile_recharge.webp"
+                  alt="1-Year Mobile Recharge"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
-              <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">Milestone 1</span>
-              {/* Card Heading: 18px */}
-              <h3 className="text-lg font-extrabold text-gray-900 mt-1">
+
+              {/* Card Heading */}
+              <h3 className="text-lg font-extrabold text-gray-900">
                 6 Months Continuously
               </h3>
-              {/* Description: 14px */}
+
+              {/* Description */}
               <p className="text-sm text-gray-600 mt-2 leading-relaxed font-medium">
                 Get a <strong className="text-gray-900">1-year mobile recharge</strong> for one family member (Valid on any network).
               </p>
             </div>
+
             <div className="mt-5 pt-3 border-t border-gray-100 flex items-center text-xs font-bold text-emerald-600 gap-1.5">
               <CheckCircle2 className="w-4 h-4" /> 1-Year Free Recharge
             </div>
           </div>
 
           {/* 12 Months */}
-          <div className="bg-white rounded-2xl p-5 border-2 border-amber-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden group">
-            <div className="absolute top-0 right-0 bg-[#F59E0B] text-white text-xs font-black px-3 py-1 rounded-bl-xl uppercase tracking-wider">
+          <div className="bg-white rounded-3xl p-5 border-2 border-amber-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden group">
+            <div className="absolute top-0 right-0 z-10 bg-[#F59E0B] text-white text-xs font-black px-3.5 py-1.5 rounded-bl-2xl uppercase tracking-wider shadow-sm">
               12 Months
             </div>
+
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#F59E0B] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <Plane className="w-6 h-6" />
+              {/* Hero Image */}
+              <div className="relative w-full h-44 rounded-2xl overflow-hidden mb-4 bg-gray-50 border border-gray-100 shadow-inner">
+                <Image
+                  src="/images/milestones/02_couple_tour.webp"
+                  alt="3D/2N Couple Tour Vacation"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
-              <span className="text-xs font-bold text-amber-600 uppercase tracking-wider">Milestone 2</span>
-              {/* Card Heading: 18px */}
-              <h3 className="text-lg font-extrabold text-gray-900 mt-1">
+
+              {/* Card Heading */}
+              <h3 className="text-lg font-extrabold text-gray-900">
                 12 Months Continuously
               </h3>
-              {/* Description: 14px */}
+
+              {/* Description */}
               <p className="text-sm text-gray-600 mt-2 leading-relaxed font-medium">
                 Get a <strong className="text-gray-900">3-Day / 2-Night Couple Tour Package</strong>.
               </p>
             </div>
+
             <div className="mt-5 pt-3 border-t border-gray-100 flex items-center text-xs font-bold text-emerald-600 gap-1.5">
               <CheckCircle2 className="w-4 h-4" /> 3D/2N Vacation Package
             </div>
           </div>
 
           {/* 24 Months */}
-          <div className="bg-white rounded-2xl p-5 border-2 border-emerald-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden group">
-            <div className="absolute top-0 right-0 bg-[#10B981] text-white text-xs font-black px-3 py-1 rounded-bl-xl uppercase tracking-wider">
+          <div className="bg-white rounded-3xl p-5 border-2 border-emerald-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden group">
+            <div className="absolute top-0 right-0 z-10 bg-[#10B981] text-white text-xs font-black px-3.5 py-1.5 rounded-bl-2xl uppercase tracking-wider shadow-sm">
               24 Months
             </div>
+
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#10B981] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <Briefcase className="w-6 h-6" />
+              {/* Hero Image */}
+              <div className="relative w-full h-44 rounded-2xl overflow-hidden mb-4 bg-gray-50 border border-gray-100 shadow-inner">
+                <Image
+                  src="/images/milestones/03_job_opportunity.webp"
+                  alt="Guaranteed Job Opportunity"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
-              <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider">Milestone 3</span>
-              {/* Card Heading: 18px */}
-              <h3 className="text-lg font-extrabold text-gray-900 mt-1">
+
+              {/* Card Heading */}
+              <h3 className="text-lg font-extrabold text-gray-900">
                 24 Months Continuously
               </h3>
-              {/* Description: 14px */}
+
+              {/* Description */}
               <p className="text-sm text-gray-600 mt-2 leading-relaxed font-medium">
                 Get a <strong className="text-gray-900">guaranteed Job Opportunity</strong> for one family member.
               </p>
             </div>
+
             <div className="mt-5 pt-3 border-t border-gray-100 flex items-center text-xs font-bold text-emerald-600 gap-1.5">
               <CheckCircle2 className="w-4 h-4" /> Guaranteed Employment
             </div>
@@ -161,7 +180,6 @@ export default function PromisePage() {
               <h2 className="text-lg sm:text-xl font-extrabold text-white flex items-center gap-2">
                 36-MONTH LONG-TERM SECURITY BENEFITS
               </h2>
-              {/* Condition Subtitle: 14px mobile, 16px desktop */}
               <p className="text-sm sm:text-base text-blue-100 mt-1 font-medium leading-relaxed">
                 Complete 36 months of regular continuous purchases to secure your family&apos;s future:
               </p>
@@ -171,14 +189,18 @@ export default function PromisePage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Benefit 1: Free Education */}
-          <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm hover:border-[#1E3A8A] transition-all flex flex-col justify-between">
+          <div className="bg-white rounded-3xl p-5 border border-gray-200 shadow-sm hover:border-[#1E3A8A] transition-all flex flex-col justify-between group overflow-hidden">
             <div>
-              <div className="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3">
-                <GraduationCap className="w-6 h-6" />
+              <div className="relative w-full h-36 rounded-2xl overflow-hidden mb-3 bg-gray-50 border border-gray-100">
+                <Image
+                  src="/images/milestones/04_free_education.webp"
+                  alt="Free Education"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
               <span className="text-xs font-extrabold text-indigo-700 uppercase bg-indigo-50 px-2 py-0.5 rounded">Higher Education</span>
               <h3 className="text-base sm:text-lg font-extrabold text-gray-900 mt-2">FREE EDUCATION</h3>
-              {/* Description: 14px */}
               <p className="text-sm text-gray-600 mt-2 leading-relaxed font-medium">
                 Free education for one child, up to his/her higher education choice.
               </p>
@@ -186,14 +208,18 @@ export default function PromisePage() {
           </div>
 
           {/* Benefit 2: Marriage Assistance */}
-          <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm hover:border-[#1E3A8A] transition-all flex flex-col justify-between">
+          <div className="bg-white rounded-3xl p-5 border border-gray-200 shadow-sm hover:border-[#1E3A8A] transition-all flex flex-col justify-between group overflow-hidden">
             <div>
-              <div className="w-11 h-11 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center mb-3">
-                <HeartHandshake className="w-6 h-6" />
+              <div className="relative w-full h-36 rounded-2xl overflow-hidden mb-3 bg-gray-50 border border-gray-100">
+                <Image
+                  src="/images/milestones/05_marriage_assistance.webp"
+                  alt="Marriage Assistance"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
               <span className="text-xs font-extrabold text-rose-700 uppercase bg-rose-50 px-2 py-0.5 rounded">Wedding Aid</span>
               <h3 className="text-base sm:text-lg font-extrabold text-gray-900 mt-2">MARRIAGE ASSISTANCE</h3>
-              {/* Description: 14px */}
               <p className="text-sm text-gray-600 mt-2 leading-relaxed font-medium">
                 Full marriage expenses for one girl child will be completely borne by us.
               </p>
@@ -201,14 +227,18 @@ export default function PromisePage() {
           </div>
 
           {/* Benefit 3: Basic Healthcare */}
-          <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm hover:border-[#1E3A8A] transition-all flex flex-col justify-between">
+          <div className="bg-white rounded-3xl p-5 border border-gray-200 shadow-sm hover:border-[#1E3A8A] transition-all flex flex-col justify-between group overflow-hidden">
             <div>
-              <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
-                <Stethoscope className="w-6 h-6" />
+              <div className="relative w-full h-36 rounded-2xl overflow-hidden mb-3 bg-gray-50 border border-gray-100">
+                <Image
+                  src="/images/milestones/06_basic_healthcare.webp"
+                  alt="Basic Healthcare"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
               <span className="text-xs font-extrabold text-emerald-700 uppercase bg-emerald-50 px-2 py-0.5 rounded">Family Health</span>
               <h3 className="text-base sm:text-lg font-extrabold text-gray-900 mt-2">BASIC HEALTHCARE</h3>
-              {/* Description: 14px */}
               <p className="text-sm text-gray-600 mt-2 leading-relaxed font-medium">
                 Free medical care coverage for up to 4 family members.
               </p>
@@ -216,19 +246,23 @@ export default function PromisePage() {
           </div>
 
           {/* Benefit 4: Major Medical Cover */}
-          <div className="bg-white rounded-2xl p-5 border-2 border-amber-300 bg-gradient-to-br from-amber-50/50 to-white shadow-sm hover:shadow-md transition-all sm:col-span-2 lg:col-span-2">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-md">
-                <ShieldCheck className="w-7 h-7" />
+          <div className="bg-white rounded-3xl p-5 border-2 border-amber-300 bg-gradient-to-br from-amber-50/30 to-white shadow-sm hover:shadow-md transition-all sm:col-span-2 lg:col-span-2 group overflow-hidden">
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <div className="relative w-full sm:w-44 h-40 rounded-2xl overflow-hidden shrink-0 border border-amber-200 shadow-sm bg-gray-50">
+                <Image
+                  src="/images/milestones/07_major_medical_cover.webp"
+                  alt="Major Medical Cover"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
               <div>
                 <span className="text-xs font-extrabold text-amber-800 uppercase bg-amber-200/80 px-2.5 py-0.5 rounded-full">
                   High Value Cover
                 </span>
-                <h3 className="text-base sm:text-lg font-extrabold text-gray-900 mt-1">
+                <h3 className="text-base sm:text-lg font-extrabold text-gray-900 mt-2">
                   MAJOR MEDICAL COVER (₹20,00,000 – ₹30,00,000)
                 </h3>
-                {/* Description: 14px */}
                 <p className="text-sm text-gray-700 mt-1.5 leading-relaxed font-medium">
                   Free major medical expenses borne by us (<strong>From Rs. 20,00,000/- to Rs. 30,00,000/-</strong> for one member only).
                 </p>
@@ -237,16 +271,22 @@ export default function PromisePage() {
           </div>
 
           {/* Benefit 5: Job Loss Protection */}
-          <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm hover:border-[#1E3A8A] transition-all sm:col-span-2 lg:col-span-1">
-            <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-3">
-              <ShieldAlert className="w-6 h-6" />
+          <div className="bg-white rounded-3xl p-5 border border-gray-200 shadow-sm hover:border-[#1E3A8A] transition-all sm:col-span-2 lg:col-span-1 group overflow-hidden">
+            <div>
+              <div className="relative w-full h-36 rounded-2xl overflow-hidden mb-3 bg-gray-50 border border-gray-100">
+                <Image
+                  src="/images/milestones/08_job_loss_protection.webp"
+                  alt="Job Loss Protection"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <span className="text-xs font-extrabold text-amber-700 uppercase bg-amber-50 px-2 py-0.5 rounded">Monthly Support</span>
+              <h3 className="text-base sm:text-lg font-extrabold text-gray-900 mt-2">JOB LOSS PROTECTION</h3>
+              <p className="text-sm text-gray-600 mt-1.5 leading-relaxed font-medium">
+                If you lose your job after 36 months, we will provide a <strong>Rs. 12,000/- monthly provision allowance</strong>.
+              </p>
             </div>
-            <span className="text-xs font-extrabold text-amber-700 uppercase bg-amber-50 px-2 py-0.5 rounded">Monthly Support</span>
-            <h3 className="text-base sm:text-lg font-extrabold text-gray-900 mt-2">JOB LOSS PROTECTION</h3>
-            {/* Description: 14px */}
-            <p className="text-sm text-gray-600 mt-1.5 leading-relaxed font-medium">
-              If you lose your job after 36 months, we will provide a <strong>Rs. 12,000/- monthly provision allowance</strong>.
-            </p>
           </div>
         </div>
       </section>
@@ -266,7 +306,6 @@ export default function PromisePage() {
             </div>
           </div>
 
-          {/* Description: 14px mobile, 16px desktop */}
           <p className="text-emerald-100 text-sm sm:text-base mt-2 font-medium">
             Own your dream home with our easy monthly installment plan:
           </p>
