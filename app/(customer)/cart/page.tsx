@@ -54,7 +54,9 @@ export default function CartPage() {
             <div className="flex-1 min-w-0">
               <h3 className="font-medium text-gray-900 truncate">{item.productName}</h3>
               <p className="text-xs text-gray-500">{item.packSize}</p>
-              <p className="font-bold text-[#1E3A8A] mt-1">{formatCurrency(item.price)}</p>
+              <span className="inline-block text-[10px] font-black text-[#1E3A8A] bg-blue-50 px-2 py-0.5 rounded mt-1">
+                TODAY MARKET PRICE
+              </span>
             </div>
 
             <div className="flex items-center space-x-2 bg-gray-50 rounded-lg p-1 border border-gray-200">
@@ -81,19 +83,19 @@ export default function CartPage() {
         ))}
       </div>
 
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-3">
-        <h3 className="font-bold text-gray-900 mb-2">Bill Details</h3>
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-3">
+        <h3 className="font-bold text-gray-900 mb-2">Order Summary</h3>
         <div className="flex justify-between text-gray-600 text-sm">
-          <span>Item Subtotal</span>
-          <span>{formatCurrency(subtotal)}</span>
+          <span>Total Selected Items</span>
+          <span className="font-bold text-gray-900">{items.reduce((sum, i) => sum + i.quantity, 0)} items</span>
         </div>
         <div className="flex justify-between text-gray-600 text-sm">
-          <span>Delivery Fee</span>
-          <span>{delivery === 0 ? <span className="text-[#10B981] font-semibold">FREE (Orders &gt; ₹500)</span> : formatCurrency(delivery)}</span>
+          <span>Doorstep Delivery</span>
+          <span className="text-[#10B981] font-bold">FREE (Bengaluru)</span>
         </div>
-        <div className="border-t border-dashed border-gray-200 pt-3 flex justify-between font-bold text-lg text-gray-900">
-          <span>To Pay</span>
-          <span>{formatCurrency(total)}</span>
+        <div className="border-t border-dashed border-gray-200 pt-3 text-xs text-gray-500 space-y-1">
+          <p className="font-semibold text-gray-700">📋 Billed at Today&apos;s Lowest Market Price</p>
+          <p className="text-[11px] text-gray-400">Final itemized receipt will be provided at doorstep delivery. Pay easily via Cash or UPI.</p>
         </div>
       </div>
 
@@ -105,9 +107,9 @@ export default function CartPage() {
 
       <Link 
         href={isBengaluru ? "/checkout" : "#"} 
-        className={`w-full flex items-center justify-center gap-2 text-center py-4 rounded-xl font-bold text-lg transition-colors shadow-md ${
+        className={`w-full flex items-center justify-center gap-2 text-center py-4 rounded-2xl font-bold text-base transition-all shadow-md ${
           isBengaluru 
-            ? 'bg-[#10B981] hover:bg-emerald-600 text-white cursor-pointer' 
+            ? 'bg-[#10B981] hover:bg-emerald-600 active:scale-98 text-white cursor-pointer' 
             : 'bg-gray-300 text-gray-500 cursor-not-allowed pointer-events-none'
         }`}
       >

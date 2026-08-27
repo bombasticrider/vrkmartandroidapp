@@ -25,10 +25,10 @@ export default function HomePage() {
             <Sparkles size={14} /> Bengaluru Metro Grocery
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold leading-tight">
-            100% Genuine Daily Groceries at Standard MRP
+            100% Genuine Daily Groceries at Today&apos;s Market Price
           </h1>
           <p className="text-blue-100 text-xs sm:text-sm">
-            Free doorstep delivery on orders above ₹500 across Bengaluru.
+            Free doorstep delivery across Bengaluru. Billed at daily mandi rates.
           </p>
           <div className="pt-2">
             <Link

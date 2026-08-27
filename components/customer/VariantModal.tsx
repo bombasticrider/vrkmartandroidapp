@@ -104,8 +104,10 @@ export default function VariantModal({ product, isOpen, onClose }: VariantModalP
                         <span className="font-medium text-gray-900">{variant.pack_size}</span>
                       </div>
                       <div className="text-right">
-                        <div className="text-[10px] text-gray-500 font-semibold uppercase">MRP PRICE</div>
-                        <div className="font-bold text-gray-900 text-base">{formatCurrency(variant.price)}</div>
+                        <div className="text-[9px] text-[#1E3A8A] font-black uppercase bg-blue-50 px-2 py-0.5 rounded border border-blue-100/80">
+                          TODAY MARKET PRICE
+                        </div>
+                        <div className="text-xs text-gray-500 font-medium mt-0.5">Billed on delivery</div>
                       </div>
                     </label>
                   )

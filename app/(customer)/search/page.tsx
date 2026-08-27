@@ -60,7 +60,7 @@ export default function SearchPage() {
         </div>
       ) : (
         <div className="space-y-2">
-          <p className="text-xs text-gray-500">{filtered.length} products found at standard MRP</p>
+          <p className="text-xs text-gray-500">{filtered.length} products available at today&apos;s market price</p>
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5">
             {filtered.map((product) => (
               <ProductCard key={product.id} product={product} />

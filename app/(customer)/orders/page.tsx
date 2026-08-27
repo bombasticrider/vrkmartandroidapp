@@ -193,7 +193,9 @@ export default function OrdersPage() {
                       <span className="text-gray-400 font-normal ml-1">({item.pack_size})</span>
                     )}
                   </span>
-                  <span className="font-bold text-gray-700">₹{item.line_total || item.price * item.quantity}</span>
+                  <span className="text-[10px] font-bold text-[#1E3A8A] bg-blue-50 px-2 py-0.5 rounded">
+                    MARKET PRICE
+                  </span>
                 </div>
               ))}
             </div>
@@ -210,10 +212,10 @@ export default function OrdersPage() {
             <div className="flex justify-between items-center pt-3 border-t border-gray-100">
               <div>
                 <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400 block">
-                  Total Paid / COD
+                  Payment Mode
                 </span>
-                <span className="font-extrabold text-base text-gray-900">
-                  ₹{order.total_amount || order.subtotal}
+                <span className="font-extrabold text-xs text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md inline-block mt-0.5">
+                  💵 Pay on Delivery
                 </span>
               </div>
 

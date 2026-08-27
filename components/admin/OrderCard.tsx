@@ -57,15 +57,15 @@ export function OrderCard({ order, onStatusUpdate }: OrderCardProps) {
         </h4>
         <ul className="space-y-2 text-sm">
           {order.items.map(item => (
-            <li key={item.id} className="flex justify-between text-gray-600">
+            <li key={item.id} className="flex justify-between text-gray-700 font-medium">
               <span>{item.quantity}x {item.name}</span>
-              <span>₹{item.price * item.quantity}</span>
+              <span className="text-xs text-[#1E3A8A] font-bold bg-blue-50 px-2 py-0.5 rounded">Market Rate</span>
             </li>
           ))}
         </ul>
-        <div className="border-t mt-4 pt-4 flex justify-between font-bold text-gray-900">
-          <span>Total</span>
-          <span>₹{order.total}</span>
+        <div className="border-t mt-4 pt-4 flex justify-between items-center text-sm font-bold text-gray-900">
+          <span>Billing Mode</span>
+          <span className="text-emerald-700 bg-emerald-50 px-2 py-1 rounded text-xs">💵 Pay on Delivery</span>
         </div>
       </div>
 

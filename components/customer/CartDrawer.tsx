@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Trash2, ShoppingBag } from 'lucide-react'
+import { X, Trash2, ShoppingBag, ArrowRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useCartStore } from '@/store/useCartStore'
 import { useLocationStore } from '@/store/useLocationStore'
@@ -107,7 +107,9 @@ export default function CartDrawer() {
                           <span className="text-xs text-gray-500 mt-0.5 block">{item.packSize}</span>
                         </div>
                         <div className="flex items-center justify-between mt-2">
-                          <span className="font-bold text-gray-900">{formatCurrency(item.price)}</span>
+                          <span className="text-[10px] font-extrabold text-[#1E3A8A] bg-blue-50 px-2 py-0.5 rounded">
+                            MARKET PRICE
+                          </span>
                           <div className="flex items-center border border-gray-200 rounded-full h-7 overflow-hidden">
                             <button
                               onClick={() => {
@@ -142,28 +144,23 @@ export default function CartDrawer() {
 
             {/* Footer */}
             {items.length > 0 && (
-              <div className="bg-white border-t border-gray-200 p-4 pb-safe">
-                <div className="space-y-2 mb-4">
-                  <div className="flex justify-between text-sm text-gray-600">
-                    <span>Subtotal</span>
-                    <span>{formatCurrency(subtotal)}</span>
+              <div className="bg-white border-t border-gray-200 p-4 pb-safe space-y-3">
+                <div className="bg-blue-50/70 p-3 rounded-xl border border-blue-100 text-xs space-y-1.5">
+                  <div className="flex justify-between font-bold text-gray-800">
+                    <span>Total Selected Items</span>
+                    <span>{items.reduce((sum, i) => sum + i.quantity, 0)} items</span>
                   </div>
-                  <div className="flex justify-between text-sm text-gray-600">
-                    <span>Delivery Fee</span>
-                    {deliveryFee === 0 ? (
-                      <span className="text-[#10B981] font-medium">Free</span>
-                    ) : (
-                      <span>{formatCurrency(deliveryFee)}</span>
-                    )}
+                  <div className="flex justify-between text-gray-600">
+                    <span>Doorstep Delivery</span>
+                    <span className="text-[#10B981] font-bold">FREE (Bengaluru)</span>
                   </div>
-                  <div className="border-t border-dashed border-gray-200 pt-2 flex justify-between font-bold text-lg text-gray-900">
-                    <span>To Pay</span>
-                    <span>{formatCurrency(total)}</span>
+                  <div className="pt-1 border-t border-blue-200/60 text-[11px] text-gray-500 font-medium">
+                    📋 Billed at today&apos;s lowest market price upon delivery.
                   </div>
                 </div>
 
                 {!isBengaluru && (
-                  <div className="mb-3 p-2.5 bg-[#F59E0B]/10 rounded-lg flex gap-2 items-start text-[#B45309] text-xs">
+                  <div className="p-2.5 bg-[#F59E0B]/10 rounded-lg flex gap-2 items-start text-[#B45309] text-xs">
                     <span className="shrink-0">⚠️</span>
                     <p>Checkout is disabled. We don&apos;t deliver to your pincode yet.</p>
                   </div>
@@ -172,10 +169,10 @@ export default function CartDrawer() {
                 <button
                   onClick={handleCheckout}
                   disabled={!isBengaluru}
-                  className="w-full bg-[#1E3A8A] text-white py-3.5 rounded-xl font-semibold text-base hover:bg-blue-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-between px-6"
+                  className="w-full bg-[#10B981] hover:bg-emerald-600 active:scale-95 text-white py-3.5 rounded-xl font-bold text-base transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer shadow-md"
                 >
                   <span>{isBengaluru ? 'Proceed to Checkout' : 'Checkout Unavailable'}</span>
-                  {isBengaluru && <span>{formatCurrency(total)}</span>}
+                  <ArrowRight size={18} />
                 </button>
               </div>
             )}

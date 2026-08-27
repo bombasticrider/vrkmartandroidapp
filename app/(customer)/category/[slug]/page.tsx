@@ -35,7 +35,7 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
           </Link>
           <div>
             <h1 className="text-xl font-bold text-gray-900">{categoryTitle}</h1>
-            <p className="text-xs text-gray-500">{products.length} products available at standard MRP</p>
+            <p className="text-xs text-gray-500">{products.length} products available at today&apos;s market price</p>
           </div>
         </div>
 

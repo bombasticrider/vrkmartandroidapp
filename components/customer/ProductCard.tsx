@@ -124,14 +124,14 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
 
-        {/* Price Section: Standard MRP Price (VRK Mart business rule) + Add Stepper */}
+        {/* Price Section: Today Market Price + Add Stepper */}
         <div className="mt-auto pt-2 border-t border-gray-50 flex items-center justify-between gap-2">
           <div className="flex flex-col">
-            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider leading-none">
-              MRP PRICE
+            <span className="text-[9px] text-[#1E3A8A] font-black uppercase tracking-wider leading-none bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100/80">
+              TODAY MARKET PRICE
             </span>
-            <span className="text-base font-bold text-gray-900 leading-none mt-1">
-              {formatCurrency(selectedVariant.price)}
+            <span className="text-[11px] text-gray-500 font-semibold leading-none mt-1">
+              Billed on delivery
             </span>
           </div>
 

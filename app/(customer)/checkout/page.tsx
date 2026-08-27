@@ -197,7 +197,9 @@ export default function CheckoutPage() {
                 <p className="font-bold text-gray-900">{item.productName}</p>
                 <p className="text-gray-400">{item.packSize} &times; {item.quantity}</p>
               </div>
-              <span className="font-bold text-gray-900">₹{item.price * item.quantity}</span>
+              <span className="text-[10px] font-black text-[#1E3A8A] bg-blue-50 px-2 py-0.5 rounded">
+                MARKET PRICE
+              </span>
             </div>
           ))}
         </div>
@@ -205,18 +207,16 @@ export default function CheckoutPage() {
         {/* Price Breakdown */}
         <div className="pt-3 border-t border-gray-100 space-y-2 text-xs">
           <div className="flex justify-between text-gray-600">
-            <span>Items Subtotal</span>
-            <span>₹{subtotal}</span>
+            <span>Total Items</span>
+            <span className="font-bold text-gray-900">{items.reduce((sum, i) => sum + i.quantity, 0)} items</span>
           </div>
           <div className="flex justify-between text-gray-600">
-            <span>Delivery Fee</span>
-            <span className={deliveryFee === 0 ? 'text-emerald-600 font-bold' : ''}>
-              {deliveryFee === 0 ? 'FREE' : `₹${deliveryFee}`}
-            </span>
+            <span>Doorstep Delivery</span>
+            <span className="text-emerald-600 font-bold">FREE (Bengaluru)</span>
           </div>
-          <div className="flex justify-between text-sm font-extrabold text-gray-900 pt-2 border-t border-gray-100">
-            <span>Total Payable Amount</span>
-            <span className="text-[#1E3A8A] text-base">₹{total}</span>
+          <div className="pt-2 border-t border-gray-100 text-xs text-gray-500 space-y-1">
+            <p className="font-bold text-gray-800">📋 Billed at Today&apos;s Lowest Market Price</p>
+            <p className="text-[11px] text-gray-400">Final itemized receipt will be provided at doorstep delivery. Pay easily via Cash or UPI.</p>
           </div>
         </div>
       </div>
@@ -226,31 +226,14 @@ export default function CheckoutPage() {
         <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">
           Payment Method
         </h2>
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            onClick={() => setPaymentMethod('PAY_ON_DELIVERY')}
-            className={`p-4 rounded-xl border-2 text-left font-bold text-xs transition-all cursor-pointer ${
-              paymentMethod === 'PAY_ON_DELIVERY'
-                ? 'border-[#1E3A8A] bg-blue-50/50 text-[#1E3A8A]'
-                : 'border-gray-200 text-gray-600'
-            }`}
-          >
-            💵 Pay on Delivery
-            <span className="block font-normal text-[10px] text-gray-400 mt-1">Cash or UPI on doorstep</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setPaymentMethod('UPI')}
-            className={`p-4 rounded-xl border-2 text-left font-bold text-xs transition-all cursor-pointer ${
-              paymentMethod === 'UPI'
-                ? 'border-[#1E3A8A] bg-blue-50/50 text-[#1E3A8A]'
-                : 'border-gray-200 text-gray-600'
-            }`}
-          >
-            ⚡ PhonePe / UPI
-            <span className="block font-normal text-[10px] text-gray-400 mt-1">Instant online payment</span>
-          </button>
+        <div className="p-4 rounded-2xl border-2 border-[#1E3A8A] bg-blue-50/50 text-[#1E3A8A]">
+          <div className="flex items-center justify-between">
+            <span className="font-bold text-sm">💵 Pay on Delivery</span>
+            <span className="text-[10px] font-extrabold bg-[#10B981] text-white px-2 py-0.5 rounded-full">RECOMMENDED</span>
+          </div>
+          <p className="font-normal text-xs text-gray-600 mt-1">
+            Pay with UPI (GPay / PhonePe / Paytm QR) or Cash when groceries are delivered to your door.
+          </p>
         </div>
       </div>
 
@@ -270,7 +253,7 @@ export default function CheckoutPage() {
           <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin" />
         ) : (
           <>
-            <span>Place Order • ₹{total}</span>
+            <span>Place Order (Pay on Delivery)</span>
             <ArrowRight className="w-5 h-5" />
           </>
         )}
