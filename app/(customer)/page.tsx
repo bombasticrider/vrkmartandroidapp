@@ -8,8 +8,8 @@ import ProductCard, { ProductCardProduct } from '@/components/customer/ProductCa
 import VariantModal from '@/components/customer/VariantModal';
 import { ALL_PRODUCTS } from '@/lib/productsData';
 
-// Blinkit-style All Category Tiles with official .avif images and soft blue background
-const ALL_CATEGORY_TILES = [
+// Full-bleed Category Tiles with embedded graphic content
+const CATEGORY_TILES = [
   {
     name: 'Dairy, Bread & Eggs',
     slug: 'dairy',
@@ -46,16 +46,6 @@ const ALL_CATEGORY_TILES = [
     image: '/images/categories/breakfast-instant-food.avif',
   },
   {
-    name: 'Sweet Tooth',
-    slug: 'packaged-food',
-    image: '/images/categories/asset_Sweets_&_chocolates.jpg',
-  },
-  {
-    name: 'Bakery & Biscuits',
-    slug: 'packaged-food',
-    image: '/images/categories/asset_Biscuits_&_bakery.jpg',
-  },
-  {
     name: 'Tea, Coffee & Drinks',
     slug: 'wellness',
     image: '/images/categories/tea-coffee-drinks.avif',
@@ -66,9 +56,19 @@ const ALL_CATEGORY_TILES = [
     image: '/images/categories/cleaning-products.avif',
   },
   {
-    name: 'Personal Care',
-    slug: 'personal-care',
-    image: '/images/categories/asset_Bath_&_Body.jpg',
+    name: 'Chicken, Meat & Fish',
+    slug: 'packaged-food',
+    image: '/images/categories/meat-non-veg.avif',
+  },
+  {
+    name: 'Bakery & Biscuits',
+    slug: 'packaged-food',
+    image: '/images/categories/asset_Biscuits_&_bakery.jpg',
+  },
+  {
+    name: 'Sweet Tooth',
+    slug: 'packaged-food',
+    image: '/images/categories/asset_Sweets_&_chocolates.jpg',
   },
 ];
 
@@ -114,11 +114,11 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Visual Category Grid (Exact Blinkit Layout & Styling) */}
-      <section className="space-y-3 bg-white p-4 sm:p-6 rounded-3xl border border-gray-100 shadow-xs">
-        <div className="flex items-center justify-between pb-1">
+      {/* Full-Bleed Visual Category Grid */}
+      <section className="space-y-3">
+        <div className="flex items-center justify-between px-1">
           <h2 className="text-base sm:text-lg font-black text-gray-900 tracking-tight">
-            Explore All Categories
+            Shop by Category
           </h2>
           <Link
             href="/categories"
@@ -129,28 +129,23 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* Responsive Grid: 4 cols on mobile, 6 on tablet, 8 to 10 on desktop */}
-        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-6 lg:grid-cols-6 gap-3 sm:gap-4 pt-1">
-          {ALL_CATEGORY_TILES.map((cat) => (
+        {/* 4 cols on mobile, 6 cols on desktop with full-bleed cards */}
+        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-6 gap-2 sm:gap-3.5">
+          {CATEGORY_TILES.map((cat) => (
             <Link
               key={cat.name}
               href={`/category/${cat.slug}`}
-              className="flex flex-col items-center group active:scale-95 transition-transform"
+              className="block group active:scale-95 transition-transform"
+              title={cat.name}
             >
-              {/* Soft Sky Blue Container (Blinkit Signature Style) */}
-              <div className="w-full aspect-square rounded-2xl bg-[#EBF4FF] border border-[#DCEBFE] flex items-center justify-center p-2 shadow-xs group-hover:shadow-md group-hover:scale-105 group-hover:bg-[#E1EFFF] transition-all overflow-hidden relative">
+              <div className="relative w-full aspect-[3/4] sm:aspect-square rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-gray-100 transition-all bg-[#F0F7FF]">
                 <Image
                   src={cat.image}
                   alt={cat.name}
                   fill
-                  className="object-contain p-1.5 transition-transform duration-300 group-hover:scale-110"
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
-
-              {/* Centered Clean 2-Line Category Name */}
-              <span className="text-[11px] sm:text-xs font-bold text-gray-800 text-center mt-2 line-clamp-2 leading-snug group-hover:text-[#1E3A8A] transition-colors">
-                {cat.name}
-              </span>
             </Link>
           ))}
         </div>
@@ -158,7 +153,7 @@ export default function HomePage() {
 
       {/* Section 1: Popular Grocery Staples */}
       <section className="space-y-3 pt-2">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between px-1">
           <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
             <TrendingUp size={20} className="text-[#10B981]" />
             <span>Popular Grocery Staples</span>
@@ -185,7 +180,7 @@ export default function HomePage() {
 
       {/* Section 2: Snacks, Biscuits & Beverages */}
       <section className="space-y-3 pt-2">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between px-1">
           <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
             <Coffee size={20} className="text-[#F59E0B]" />
             <span>Snacks, Biscuits & Beverages</span>
@@ -212,7 +207,7 @@ export default function HomePage() {
 
       {/* Section 3: Home & Personal Care */}
       <section className="space-y-3 pt-2">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between px-1">
           <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
             <Sparkles size={20} className="text-[#1E3A8A]" />
             <span>Cleaning & Personal Care</span>
