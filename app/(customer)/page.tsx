@@ -8,7 +8,7 @@ import ProductCard, { ProductCardProduct } from '@/components/customer/ProductCa
 import VariantModal from '@/components/customer/VariantModal';
 import { ALL_PRODUCTS } from '@/lib/productsData';
 
-// Full-bleed Category Tiles with embedded graphic content
+// Full-bleed Category Tiles (Exact 270x396 AVIF graphics)
 const CATEGORY_TILES = [
   {
     name: 'Dairy, Bread & Eggs',
@@ -59,16 +59,6 @@ const CATEGORY_TILES = [
     name: 'Chicken, Meat & Fish',
     slug: 'packaged-food',
     image: '/images/categories/meat-non-veg.avif',
-  },
-  {
-    name: 'Bakery & Biscuits',
-    slug: 'packaged-food',
-    image: '/images/categories/asset_Biscuits_&_bakery.jpg',
-  },
-  {
-    name: 'Sweet Tooth',
-    slug: 'packaged-food',
-    image: '/images/categories/asset_Sweets_&_chocolates.jpg',
   },
 ];
 
@@ -129,8 +119,8 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* 4 cols on mobile, 6 cols on desktop with 0 gaps */}
-        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-6 gap-0">
+        {/* 4 cols on mobile, 5 cols on desktop - exact aspect ratio with zero horizontal letterboxing */}
+        <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-5 gap-x-0 gap-y-2 sm:gap-y-3">
           {CATEGORY_TILES.map((cat) => (
             <Link
               key={cat.name}
@@ -138,12 +128,12 @@ export default function HomePage() {
               className="block group active:scale-95 transition-transform"
               title={cat.name}
             >
-              <div className="relative w-full aspect-[0.74/1] overflow-hidden">
+              <div className="relative w-full aspect-[270/396] overflow-hidden">
                 <Image
                   src={cat.image}
                   alt={cat.name}
                   fill
-                  sizes="(max-width: 640px) 25vw, (max-width: 1024px) 16vw, 150px"
+                  sizes="(max-width: 640px) 25vw, (max-width: 1024px) 20vw, 180px"
                   className="object-contain group-hover:scale-105 transition-transform duration-200"
                 />
               </div>
