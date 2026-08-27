@@ -85,9 +85,9 @@ export default function HomePage() {
   ).slice(0, 8);
 
   return (
-    <div className="space-y-7 py-4 px-4 max-w-5xl mx-auto">
+    <div className="space-y-6 py-3 px-2 sm:px-4 max-w-5xl mx-auto">
       {/* Hero Banner */}
-      <div className="relative w-full rounded-3xl overflow-hidden bg-gradient-to-r from-[#1E3A8A] via-[#162d6e] to-[#1E3A8A] text-white p-6 sm:p-8 shadow-lg">
+      <div className="relative w-full rounded-3xl overflow-hidden bg-gradient-to-r from-[#1E3A8A] via-[#162d6e] to-[#1E3A8A] text-white p-5 sm:p-8 shadow-lg">
         <div className="max-w-md space-y-3 relative z-10">
           <div className="inline-flex items-center gap-1.5 bg-[#F59E0B] text-black font-bold text-xs px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
             <Sparkles size={14} /> Bengaluru Metro Grocery
@@ -115,7 +115,7 @@ export default function HomePage() {
       </div>
 
       {/* Full-Bleed Visual Category Grid */}
-      <section className="space-y-3">
+      <section className="space-y-2">
         <div className="flex items-center justify-between px-1">
           <h2 className="text-base sm:text-lg font-black text-gray-900 tracking-tight">
             Shop by Category
@@ -129,8 +129,8 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* 4 cols on mobile, 6 cols on desktop - pure borderless .avif tiles */}
-        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-6 gap-1.5 sm:gap-2.5">
+        {/* 4 cols on mobile with minimal 4px gap and edge-to-edge width */}
+        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-6 gap-1 sm:gap-2.5">
           {CATEGORY_TILES.map((cat) => (
             <Link
               key={cat.name}
@@ -138,11 +138,12 @@ export default function HomePage() {
               className="block group active:scale-95 transition-transform"
               title={cat.name}
             >
-              <div className="relative w-full aspect-[0.78/1] overflow-hidden">
+              <div className="relative w-full aspect-[0.74/1] overflow-hidden">
                 <Image
                   src={cat.image}
                   alt={cat.name}
                   fill
+                  sizes="(max-width: 640px) 25vw, (max-width: 1024px) 16vw, 150px"
                   className="object-contain group-hover:scale-105 transition-transform duration-200"
                 />
               </div>
