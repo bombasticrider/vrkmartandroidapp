@@ -141,9 +141,9 @@ export default function PincodeModal() {
         )}
 
         {/* Logo */}
-        <div className="w-28 h-10 relative mb-4">
+        <div className="w-36 h-10 relative mb-4">
           <Image
-            src="/icons/header-logo.png"
+            src="/icons/logo-blue.png"
             alt="VRK Mart Logo"
             fill
             className="object-contain"
