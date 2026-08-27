@@ -8,106 +8,67 @@ import ProductCard, { ProductCardProduct } from '@/components/customer/ProductCa
 import VariantModal from '@/components/customer/VariantModal';
 import { ALL_PRODUCTS } from '@/lib/productsData';
 
-// Visual Categories Configuration with Custom Images and Pastel Tints
-const VISUAL_CATEGORY_SECTIONS = [
+// Blinkit-style All Category Tiles with official .avif images and soft blue background
+const ALL_CATEGORY_TILES = [
   {
-    title: 'Grocery & Kitchen',
-    categories: [
-      {
-        name: 'Atta, Rice & Dal',
-        slug: 'grocery',
-        image: '/images/categories/aata-rice-dal.avif',
-        bg: 'bg-[#FEF6E9]',
-        border: 'border-[#FDE7C4]',
-      },
-      {
-        name: 'Oil, Ghee & Masala',
-        slug: 'grocery',
-        image: '/images/categories/masala-oils.avif',
-        bg: 'bg-[#FFFBEB]',
-        border: 'border-[#FEF08A]',
-      },
-      {
-        name: 'Dairy, Bread & Eggs',
-        slug: 'dairy',
-        image: '/images/categories/dairy-bread-eggs.avif',
-        bg: 'bg-[#EDF5FF]',
-        border: 'border-[#BFDBFE]',
-      },
-      {
-        name: 'Vegetables & Fruits',
-        slug: 'fruits-veg',
-        image: '/images/categories/vegetables-fruits.jpg',
-        bg: 'bg-[#E8F8F0]',
-        border: 'border-[#A7F3D0]',
-      },
-    ],
+    name: 'Dairy, Bread & Eggs',
+    slug: 'dairy',
+    image: '/images/categories/dairy-bread-eggs.avif',
   },
   {
-    title: 'Snacks & Drinks',
-    categories: [
-      {
-        name: 'Chips & Namkeen',
-        slug: 'packaged-food',
-        image: '/images/categories/chips-namkeen.jpg',
-        bg: 'bg-[#FFF4ED]',
-        border: 'border-[#FED7AA]',
-      },
-      {
-        name: 'Biscuits & Bakery',
-        slug: 'packaged-food',
-        image: '/images/categories/asset_Biscuits_&_bakery.jpg',
-        bg: 'bg-[#FAF5EE]',
-        border: 'border-[#E7E0D8]',
-      },
-      {
-        name: 'Drinks & Juices',
-        slug: 'packaged-food',
-        image: '/images/categories/colddrinks-juices.avif',
-        bg: 'bg-[#E6F8F6]',
-        border: 'border-[#99F6E4]',
-      },
-      {
-        name: 'Instant Food',
-        slug: 'packaged-food',
-        image: '/images/categories/breakfast-instant-food.avif',
-        bg: 'bg-[#FFF0F0]',
-        border: 'border-[#FECACA]',
-      },
-    ],
+    name: 'Fruits & Vegetables',
+    slug: 'fruits-veg',
+    image: '/images/categories/Fruits-vegetables.avif',
   },
   {
-    title: 'Household & Personal Care',
-    categories: [
-      {
-        name: 'Bath & Body',
-        slug: 'bath-body',
-        image: '/images/categories/asset_Bath_&_Body.jpg',
-        bg: 'bg-[#FFF1F2]',
-        border: 'border-[#FECDD3]',
-      },
-      {
-        name: 'Cleaning & Home Care',
-        slug: 'home-care',
-        image: '/images/categories/cleaning-products.avif',
-        bg: 'bg-[#EFF6FF]',
-        border: 'border-[#BFDBFE]',
-      },
-      {
-        name: 'Sweets & Treats',
-        slug: 'packaged-food',
-        image: '/images/categories/asset_Sweets_&_chocolates.jpg',
-        bg: 'bg-[#FAF5FF]',
-        border: 'border-[#E9D5FF]',
-      },
-      {
-        name: 'Health & Wellness',
-        slug: 'wellness',
-        image: '/images/categories/category-wellness.svg',
-        bg: 'bg-[#ECFDF5]',
-        border: 'border-[#A7F3D0]',
-      },
-    ],
+    name: 'Atta, Rice & Dal',
+    slug: 'grocery',
+    image: '/images/categories/aata-rice-dal.avif',
+  },
+  {
+    name: 'Masala, Oil & More',
+    slug: 'grocery',
+    image: '/images/categories/masala-oils.avif',
+  },
+  {
+    name: 'Cold Drinks & Juices',
+    slug: 'packaged-food',
+    image: '/images/categories/colddrinks-juices.avif',
+  },
+  {
+    name: 'Snacks & Munchies',
+    slug: 'packaged-food',
+    image: '/images/categories/snacks-munchies.avif',
+  },
+  {
+    name: 'Breakfast & Instant Food',
+    slug: 'packaged-food',
+    image: '/images/categories/breakfast-instant-food.avif',
+  },
+  {
+    name: 'Sweet Tooth',
+    slug: 'packaged-food',
+    image: '/images/categories/asset_Sweets_&_chocolates.jpg',
+  },
+  {
+    name: 'Bakery & Biscuits',
+    slug: 'packaged-food',
+    image: '/images/categories/asset_Biscuits_&_bakery.jpg',
+  },
+  {
+    name: 'Tea, Coffee & Drinks',
+    slug: 'wellness',
+    image: '/images/categories/tea-coffee-drinks.avif',
+  },
+  {
+    name: 'Cleaning Essentials',
+    slug: 'home-care',
+    image: '/images/categories/cleaning-products.avif',
+  },
+  {
+    name: 'Personal Care',
+    slug: 'personal-care',
+    image: '/images/categories/asset_Bath_&_Body.jpg',
   },
 ];
 
@@ -124,7 +85,7 @@ export default function HomePage() {
   ).slice(0, 8);
 
   return (
-    <div className="space-y-7 py-4 px-4 max-w-4xl mx-auto">
+    <div className="space-y-7 py-4 px-4 max-w-5xl mx-auto">
       {/* Hero Banner */}
       <div className="relative w-full rounded-3xl overflow-hidden bg-gradient-to-r from-[#1E3A8A] via-[#162d6e] to-[#1E3A8A] text-white p-6 sm:p-8 shadow-lg">
         <div className="max-w-md space-y-3 relative z-10">
@@ -153,53 +114,47 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Visual Category Sections (Blinkit & Zepto 4-Column Grid Style) */}
-      <div className="space-y-6">
-        {VISUAL_CATEGORY_SECTIONS.map((section) => (
-          <section key={section.title} className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h2 className="text-base sm:text-lg font-black text-gray-900 tracking-tight">
-                {section.title}
-              </h2>
-              <Link
-                href="/categories"
-                className="text-xs font-bold text-[#1E3A8A] hover:underline flex items-center gap-1"
-              >
-                <span>See All</span>
-                <ArrowRight size={13} />
-              </Link>
-            </div>
+      {/* Visual Category Grid (Exact Blinkit Layout & Styling) */}
+      <section className="space-y-3 bg-white p-4 sm:p-6 rounded-3xl border border-gray-100 shadow-xs">
+        <div className="flex items-center justify-between pb-1">
+          <h2 className="text-base sm:text-lg font-black text-gray-900 tracking-tight">
+            Explore All Categories
+          </h2>
+          <Link
+            href="/categories"
+            className="text-xs font-bold text-[#1E3A8A] hover:underline flex items-center gap-1"
+          >
+            <span>View All</span>
+            <ArrowRight size={13} />
+          </Link>
+        </div>
 
-            {/* 4-Column Pastel Grid */}
-            <div className="grid grid-cols-4 gap-2.5 sm:gap-4">
-              {section.categories.map((cat) => (
-                <Link
-                  key={`${section.title}-${cat.name}`}
-                  href={`/category/${cat.slug}`}
-                  className="flex flex-col items-center group active:scale-95 transition-transform"
-                >
-                  {/* Pastel Rounded Card */}
-                  <div
-                    className={`w-full aspect-square rounded-2xl sm:rounded-3xl ${cat.bg} border ${cat.border} flex items-center justify-center p-2 sm:p-3 shadow-xs group-hover:shadow-md group-hover:scale-105 transition-all overflow-hidden relative`}
-                  >
-                    <Image
-                      src={cat.image}
-                      alt={cat.name}
-                      fill
-                      className="object-contain p-2 mix-blend-multiply transition-transform duration-300 group-hover:scale-110"
-                    />
-                  </div>
+        {/* Responsive Grid: 4 cols on mobile, 6 on tablet, 8 to 10 on desktop */}
+        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-6 lg:grid-cols-6 gap-3 sm:gap-4 pt-1">
+          {ALL_CATEGORY_TILES.map((cat) => (
+            <Link
+              key={cat.name}
+              href={`/category/${cat.slug}`}
+              className="flex flex-col items-center group active:scale-95 transition-transform"
+            >
+              {/* Soft Sky Blue Container (Blinkit Signature Style) */}
+              <div className="w-full aspect-square rounded-2xl bg-[#EBF4FF] border border-[#DCEBFE] flex items-center justify-center p-2 shadow-xs group-hover:shadow-md group-hover:scale-105 group-hover:bg-[#E1EFFF] transition-all overflow-hidden relative">
+                <Image
+                  src={cat.image}
+                  alt={cat.name}
+                  fill
+                  className="object-contain p-1.5 transition-transform duration-300 group-hover:scale-110"
+                />
+              </div>
 
-                  {/* 2-Line Bold Category Name */}
-                  <span className="text-[11px] sm:text-xs font-bold text-gray-800 text-center mt-1.5 line-clamp-2 leading-tight group-hover:text-[#1E3A8A] transition-colors">
-                    {cat.name}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </section>
-        ))}
-      </div>
+              {/* Centered Clean 2-Line Category Name */}
+              <span className="text-[11px] sm:text-xs font-bold text-gray-800 text-center mt-2 line-clamp-2 leading-snug group-hover:text-[#1E3A8A] transition-colors">
+                {cat.name}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       {/* Section 1: Popular Grocery Staples */}
       <section className="space-y-3 pt-2">
