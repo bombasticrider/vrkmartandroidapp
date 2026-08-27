@@ -2,6 +2,8 @@ import { z } from 'zod';
 import { sendOtp, verifyOtpCode } from '@/lib/twilio';
 import { createServerClient } from '@/lib/supabaseServer';
 
+export const dynamic = 'force-dynamic';
+
 const reqSchema = z.object({
   mobile: z.string().length(10).regex(/^\d+$/),
 });

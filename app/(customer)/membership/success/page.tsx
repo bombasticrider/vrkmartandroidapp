@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
-import { ShieldCheck, Download, ShoppingBag, CheckCircle2, Star, User, Calendar, MapPin, Sparkles, Loader2 } from 'lucide-react';
+import { ShieldCheck, Download, ShoppingBag, Star, Loader2 } from 'lucide-react';
 import jsPDF from 'jspdf';
 
-export default function MembershipSuccessPage() {
+function SuccessContent() {
   const searchParams = useSearchParams();
   const paramVrkId = searchParams.get('vrkId');
   const { vrkId: storeVrkId, memberName, mobile, memberData } = useAuthStore();
@@ -234,5 +234,19 @@ export default function MembershipSuccessPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function MembershipSuccessPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <Loader2 className="w-8 h-8 text-[#1E3A8A] animate-spin" />
+        </div>
+      }
+    >
+      <SuccessContent />
+    </Suspense>
   );
 }
