@@ -129,8 +129,8 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* 4 cols on mobile with minimal 4px gap and edge-to-edge width */}
-        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-6 gap-1 sm:gap-2.5">
+        {/* 4 cols on mobile, 6 cols on desktop with 0 gaps */}
+        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-6 gap-0">
           {CATEGORY_TILES.map((cat) => (
             <Link
               key={cat.name}
