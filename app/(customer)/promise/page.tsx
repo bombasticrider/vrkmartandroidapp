@@ -297,19 +297,39 @@ export default function PromisePage() {
         <div className="bg-gradient-to-r from-emerald-700 via-teal-700 to-emerald-800 text-white rounded-3xl p-6 sm:p-8 shadow-lg relative overflow-hidden">
           <div className="absolute -right-6 -bottom-6 w-36 h-36 bg-white/10 rounded-full blur-xl pointer-events-none" />
 
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-white text-emerald-800 flex items-center justify-center font-black shadow">
-              🏢
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            {/* Left/Top Content */}
+            <div className="md:col-span-7 space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white text-emerald-800 flex items-center justify-center font-black shadow shrink-0">
+                  🏢
+                </div>
+                <div>
+                  <span className="text-emerald-200 text-xs font-bold uppercase tracking-wider">Dream Home Initiative</span>
+                  <h2 className="text-xl sm:text-2xl font-black">INTEREST FREE 2BHK HOUSING PLAN</h2>
+                </div>
+              </div>
+
+              <p className="text-emerald-100 text-sm sm:text-base font-medium leading-relaxed">
+                Every Month pay Rs. 15,000/- only. Get a 2BHK worth 36 Lakhs with NO INTEREST. Booking Amount Rs. 10,000/-. 12-month Plot registration. After 36 months, the House will be handed over.
+              </p>
             </div>
-            <div>
-              <span className="text-emerald-200 text-xs font-bold uppercase tracking-wider">Dream Home Initiative</span>
-              <h2 className="text-xl sm:text-2xl font-black">INTEREST FREE 2BHK HOUSING PLAN</h2>
+
+            {/* Right/Hero Image */}
+            <div className="md:col-span-5">
+              <div className="relative w-full h-52 sm:h-56 rounded-2xl overflow-hidden shadow-md border-2 border-white/20 bg-emerald-900/40 group">
+                <Image
+                  src="/images/milestones/09_house_handover.webp"
+                  alt="Interest Free 2BHK Housing Scheme"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-lg border border-white/20">
+                  0% Interest • 2BHK Flat
+                </div>
+              </div>
             </div>
           </div>
-
-          <p className="text-emerald-100 text-sm sm:text-base mt-2 font-medium leading-relaxed">
-            Every Month pay Rs. 15,000/- only. Get a 2BHK worth 36 Lakhs with NO INTEREST. Booking Amount Rs. 10,000/-. 12-month Plot registration. After 36 months, the House will be handed over.
-          </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-6">
             {/* Feature 1: Monthly Payment */}
