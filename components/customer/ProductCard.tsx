@@ -87,21 +87,21 @@ export default function ProductCard({ product }: ProductCardProps) {
         />
       </div>
 
-      <div className="p-2.5 flex flex-col flex-grow justify-between">
+      <div className="p-3 flex flex-col flex-grow justify-between">
         <div>
-          {/* Product Name */}
-          <h3 className="text-xs font-semibold text-gray-900 line-clamp-2 mb-1 min-h-[32px] leading-tight">
+          {/* Product Name — High contrast, crisp and easy to read */}
+          <h3 className="text-[13px] sm:text-sm font-bold text-gray-900 line-clamp-2 mb-1.5 min-h-[36px] leading-[1.25]">
             {product.name}
           </h3>
 
           {/* Pack Size / Variant Selector */}
-          <div className="mb-1.5">
+          <div className="mb-2">
             {product.variants.length > 1 ? (
               <div className="relative">
                 <select
                   value={selectedPackSize}
                   onChange={(e) => setSelectedPackSize(e.target.value)}
-                  className="w-full text-[11px] font-medium bg-gray-50 border border-gray-200 rounded-md py-1 px-1.5 pr-4 text-gray-700 appearance-none focus:outline-none focus:border-[#1E3A8A] cursor-pointer"
+                  className="w-full text-xs font-semibold bg-gray-50 border border-gray-200 rounded-lg py-1.5 px-2 pr-5 text-gray-800 appearance-none focus:outline-none focus:border-[#1E3A8A] cursor-pointer"
                 >
                   {product.variants.map((v) => (
                     <option key={v.pack_size} value={v.pack_size}>
@@ -109,12 +109,12 @@ export default function ProductCard({ product }: ProductCardProps) {
                     </option>
                   ))}
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 text-gray-400 text-[9px]">
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500 text-[10px]">
                   ▼
                 </div>
               </div>
             ) : (
-              <div className="text-[11px] text-gray-500 font-medium py-0.5">
+              <div className="text-xs text-gray-600 font-semibold py-0.5">
                 {selectedVariant.pack_size}
               </div>
             )}
@@ -122,17 +122,17 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Price Section: Today Market Price + Add Stepper */}
-        <div className="pt-1.5 mt-auto border-t border-gray-100 flex items-center justify-between gap-1.5">
+        <div className="pt-2 mt-auto border-t border-gray-100 flex items-center justify-between gap-1.5">
           <div className="flex flex-col min-w-0">
-            <span className="text-[8px] sm:text-[9px] text-[#1E3A8A] font-black uppercase tracking-tight leading-tight bg-blue-50 px-1 py-0.5 rounded border border-blue-100/80 truncate">
-              TODAY'S RATE
+            <span className="text-[10px] text-[#1E3A8A] font-extrabold uppercase tracking-tight leading-none bg-blue-50 px-1.5 py-1 rounded border border-blue-100/80">
+              MARKET RATE
             </span>
           </div>
 
           {quantity === 0 ? (
             <button
               onClick={handleAdd}
-              className="bg-emerald-50 text-[#10B981] border border-[#10B981] hover:bg-[#10B981] hover:text-white transition-all px-2.5 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wide cursor-pointer shadow-xs active:scale-95 shrink-0"
+              className="bg-emerald-50 text-[#10B981] border border-[#10B981] hover:bg-[#10B981] hover:text-white transition-all px-3 py-1 rounded-lg text-xs font-extrabold uppercase tracking-wider cursor-pointer shadow-xs active:scale-95 shrink-0"
             >
               + ADD
             </button>
@@ -140,7 +140,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             <div className="flex items-center bg-[#10B981] text-white rounded-lg h-7 overflow-hidden shadow-xs shrink-0">
               <button
                 onClick={handleDecrement}
-                className="w-6 h-full flex items-center justify-center font-bold text-xs hover:bg-black/10 transition-colors"
+                className="w-7 h-full flex items-center justify-center font-bold text-xs hover:bg-black/10 transition-colors"
                 aria-label="Decrease quantity"
               >
                 −
@@ -150,7 +150,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               </span>
               <button
                 onClick={handleIncrement}
-                className="w-6 h-full flex items-center justify-center font-bold text-xs hover:bg-black/10 transition-colors"
+                className="w-7 h-full flex items-center justify-center font-bold text-xs hover:bg-black/10 transition-colors"
                 aria-label="Increase quantity"
               >
                 +

@@ -165,8 +165,10 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
                     />
                   </div>
 
-                  {/* Subcategory Label */}
-                  <span className="text-[10px] leading-tight line-clamp-2 px-0.5">
+                  {/* Subcategory Label — Bold, clear and readable */}
+                  <span className={`text-[11px] leading-tight line-clamp-2 px-0.5 ${
+                    isActive ? 'font-black text-gray-950' : 'font-bold text-gray-600'
+                  }`}>
                     {sub.name}
                   </span>
                 </button>
@@ -178,11 +180,11 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
         {/* RIGHT PRODUCT GRID */}
         <section className="flex-1 overflow-y-auto p-2.5 sm:p-3.5 bg-gray-50/40">
           {/* Subcategory Header */}
-          <div className="flex items-center justify-between mb-2.5 px-0.5">
-            <h2 className="text-xs font-bold text-gray-800">
+          <div className="flex items-center justify-between mb-3 px-1">
+            <h2 className="text-sm font-black text-gray-900">
               {activeSubCategory}
             </h2>
-            <span className="text-[10px] text-gray-500 font-medium">
+            <span className="text-xs text-gray-500 font-semibold">
               {filteredProducts.length} {filteredProducts.length === 1 ? 'item' : 'items'}
             </span>
           </div>
