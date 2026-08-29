@@ -49,10 +49,15 @@ export async function POST(req: Request) {
       );
     }
 
-    // 2. Insert order items
+    // Helper to check for valid Supabase UUID
+    const isValidUUID = (val: any) =>
+      typeof val === 'string' &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(val);
+
+    // 2. Insert order items safely
     const orderItemsPayload = items.map((item: any) => ({
       order_id: newOrder.id,
-      product_id: item.productId?.startsWith('p-') ? null : item.productId,
+      product_id: isValidUUID(item.productId) ? item.productId : null,
       product_name: item.productName || 'Grocery Item',
       pack_size: item.packSize || '1 Unit',
       price: Number(item.price) || 0,
@@ -62,7 +67,6 @@ export async function POST(req: Request) {
 
     const { error: itemsError } = await (supabase.from('order_items') as any)
       .insert(orderItemsPayload);
-
 
     if (itemsError) {
       console.error('Supabase Order Items Insert Error:', itemsError);
