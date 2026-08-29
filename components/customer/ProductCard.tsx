@@ -89,8 +89,8 @@ export default function ProductCard({ product }: ProductCardProps) {
 
       <div className="p-3 flex flex-col flex-grow justify-between">
         <div>
-          {/* Product Name — High contrast, crisp and easy to read */}
-          <h3 className="text-[13px] sm:text-sm font-bold text-gray-900 line-clamp-2 mb-1.5 min-h-[36px] leading-[1.25]">
+          {/* Product Name — 16px Font-Normal */}
+          <h3 className="text-base font-normal text-gray-900 line-clamp-2 mb-1.5 min-h-[40px] leading-snug">
             {product.name}
           </h3>
 
@@ -101,7 +101,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 <select
                   value={selectedPackSize}
                   onChange={(e) => setSelectedPackSize(e.target.value)}
-                  className="w-full text-xs font-semibold bg-gray-50 border border-gray-200 rounded-lg py-1.5 px-2 pr-5 text-gray-800 appearance-none focus:outline-none focus:border-[#1E3A8A] cursor-pointer"
+                  className="w-full text-xs font-medium bg-gray-50 border border-gray-200 rounded-lg py-1.5 px-2 pr-5 text-gray-800 appearance-none focus:outline-none focus:border-[#1E3A8A] cursor-pointer"
                 >
                   {product.variants.map((v) => (
                     <option key={v.pack_size} value={v.pack_size}>
@@ -114,43 +114,44 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </div>
               </div>
             ) : (
-              <div className="text-xs text-gray-600 font-semibold py-0.5">
+              <div className="text-xs text-gray-600 font-medium py-0.5">
                 {selectedVariant.pack_size}
               </div>
             )}
           </div>
-        </div>
 
-        {/* Price Section: Today Market Price + Add Stepper */}
-        <div className="pt-2 mt-auto border-t border-gray-100 flex items-center justify-between gap-1.5">
-          <div className="flex flex-col min-w-0">
-            <span className="text-[10px] text-[#1E3A8A] font-extrabold uppercase tracking-tight leading-none bg-blue-50 px-1.5 py-1 rounded border border-blue-100/80">
-              MARKET RATE
+          {/* Today's Market Price Pill — Placed above the Add button */}
+          <div className="mb-2">
+            <span className="inline-block text-[10px] text-[#1E3A8A] font-extrabold uppercase tracking-tight leading-none bg-blue-50 px-2 py-1 rounded-md border border-blue-100/80">
+              TODAY&apos;S MARKET PRICE
             </span>
           </div>
+        </div>
 
+        {/* Footer: Dedicated Add Button / Stepper */}
+        <div className="pt-2 mt-auto border-t border-gray-100">
           {quantity === 0 ? (
             <button
               onClick={handleAdd}
-              className="bg-emerald-50 text-[#10B981] border border-[#10B981] hover:bg-[#10B981] hover:text-white transition-all px-3 py-1 rounded-lg text-xs font-extrabold uppercase tracking-wider cursor-pointer shadow-xs active:scale-95 shrink-0"
+              className="w-full bg-emerald-50 text-[#10B981] border border-[#10B981] hover:bg-[#10B981] hover:text-white transition-all py-1.5 px-3 rounded-xl text-xs font-black uppercase tracking-wider cursor-pointer shadow-xs active:scale-95 text-center flex items-center justify-center gap-1"
             >
               + ADD
             </button>
           ) : (
-            <div className="flex items-center bg-[#10B981] text-white rounded-lg h-7 overflow-hidden shadow-xs shrink-0">
+            <div className="w-full flex items-center justify-between bg-[#10B981] text-white rounded-xl h-8 overflow-hidden shadow-xs">
               <button
                 onClick={handleDecrement}
-                className="w-7 h-full flex items-center justify-center font-bold text-xs hover:bg-black/10 transition-colors"
+                className="w-10 h-full flex items-center justify-center font-black text-sm hover:bg-black/10 transition-colors cursor-pointer"
                 aria-label="Decrease quantity"
               >
                 −
               </button>
-              <span className="w-5 text-center text-xs font-bold">
+              <span className="text-xs font-black">
                 {quantity}
               </span>
               <button
                 onClick={handleIncrement}
-                className="w-7 h-full flex items-center justify-center font-bold text-xs hover:bg-black/10 transition-colors"
+                className="w-10 h-full flex items-center justify-center font-black text-sm hover:bg-black/10 transition-colors cursor-pointer"
                 aria-label="Increase quantity"
               >
                 +
