@@ -76,13 +76,8 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow">
-      {/* Product Image with Top-Left Emerald "Today's Market Rate" Badge */}
+      {/* Product Image — Full bleed without padding/border */}
       <div className="relative w-full aspect-square bg-gray-50 overflow-hidden">
-        {/* Option B: Emerald Green Fresh Tag */}
-        <div className="absolute top-2 left-2 z-10 bg-[#10B981] text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md shadow-sm">
-          Today&apos;s Market Rate
-        </div>
-
         <Image
           src={product.image_url || '/icons/app-icon.png'}
           alt={product.name}
@@ -94,13 +89,13 @@ export default function ProductCard({ product }: ProductCardProps) {
 
       <div className="p-3 flex flex-col flex-grow justify-between">
         <div>
-          {/* Product Name — 16px Font-Bold */}
-          <h3 className="text-base font-bold text-gray-900 line-clamp-2 mb-1.5 min-h-[42px] leading-tight">
+          {/* Product Name — High contrast, crisp and easy to read */}
+          <h3 className="text-[13px] sm:text-sm font-bold text-gray-900 line-clamp-2 mb-1.5 min-h-[36px] leading-[1.25]">
             {product.name}
           </h3>
 
           {/* Pack Size / Variant Selector */}
-          <div className="mb-2.5">
+          <div className="mb-2">
             {product.variants.length > 1 ? (
               <div className="relative">
                 <select
@@ -126,30 +121,36 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
 
-        {/* Footer: Full-Width Clean Add Button / Stepper */}
-        <div className="pt-2 mt-auto border-t border-gray-100">
+        {/* Price Section: Today Market Price + Add Stepper */}
+        <div className="pt-2 mt-auto border-t border-gray-100 flex items-center justify-between gap-1.5">
+          <div className="flex flex-col min-w-0">
+            <span className="text-[10px] text-[#1E3A8A] font-extrabold uppercase tracking-tight leading-none bg-blue-50 px-1.5 py-1 rounded border border-blue-100/80">
+              MARKET RATE
+            </span>
+          </div>
+
           {quantity === 0 ? (
             <button
               onClick={handleAdd}
-              className="w-full bg-emerald-50 text-[#10B981] border border-[#10B981] hover:bg-[#10B981] hover:text-white transition-all py-1.5 px-3 rounded-xl text-xs font-black uppercase tracking-wider cursor-pointer shadow-xs active:scale-95 text-center flex items-center justify-center gap-1"
+              className="bg-emerald-50 text-[#10B981] border border-[#10B981] hover:bg-[#10B981] hover:text-white transition-all px-3 py-1 rounded-lg text-xs font-extrabold uppercase tracking-wider cursor-pointer shadow-xs active:scale-95 shrink-0"
             >
               + ADD
             </button>
           ) : (
-            <div className="w-full flex items-center justify-between bg-[#10B981] text-white rounded-xl h-8 overflow-hidden shadow-xs">
+            <div className="flex items-center bg-[#10B981] text-white rounded-lg h-7 overflow-hidden shadow-xs shrink-0">
               <button
                 onClick={handleDecrement}
-                className="w-10 h-full flex items-center justify-center font-black text-sm hover:bg-black/10 transition-colors cursor-pointer"
+                className="w-7 h-full flex items-center justify-center font-bold text-xs hover:bg-black/10 transition-colors"
                 aria-label="Decrease quantity"
               >
                 −
               </button>
-              <span className="text-xs font-black">
+              <span className="w-5 text-center text-xs font-bold">
                 {quantity}
               </span>
               <button
                 onClick={handleIncrement}
-                className="w-10 h-full flex items-center justify-center font-black text-sm hover:bg-black/10 transition-colors cursor-pointer"
+                className="w-7 h-full flex items-center justify-center font-bold text-xs hover:bg-black/10 transition-colors"
                 aria-label="Increase quantity"
               >
                 +
