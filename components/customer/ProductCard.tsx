@@ -76,13 +76,13 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow">
-      {/* Clean Product Image — No discount stickers */}
-      <div className="relative w-full aspect-square bg-[#F8FAFC] p-3 flex items-center justify-center">
+      {/* Product Image — Full bleed without padding/border */}
+      <div className="relative w-full aspect-square bg-gray-50 overflow-hidden">
         <Image
           src={product.image_url || '/icons/app-icon.png'}
           alt={product.name}
           fill
-          className="object-contain p-2 mix-blend-multiply"
+          className="object-cover"
           sizes="(max-width: 768px) 50vw, 25vw"
         />
       </div>
@@ -127,11 +127,8 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Price Section: Today Market Price + Add Stepper */}
         <div className="mt-auto pt-2 border-t border-gray-50 flex items-center justify-between gap-2">
           <div className="flex flex-col">
-            <span className="text-[9px] text-[#1E3A8A] font-black uppercase tracking-wider leading-none bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100/80">
+            <span className="text-[9px] text-[#1E3A8A] font-black uppercase tracking-wider leading-none bg-blue-50 px-1.5 py-1 rounded border border-blue-100/80">
               TODAY MARKET PRICE
-            </span>
-            <span className="text-[11px] text-gray-500 font-semibold leading-none mt-1">
-              Billed on delivery
             </span>
           </div>
 
