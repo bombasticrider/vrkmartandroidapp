@@ -1,5 +1,5 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
 # CodeRabbit AI Configuration for VRK Mart
-version: "2"
 language: "en-US"
 tone_instructions: "Be concise, actionable, and focus on security, performance, and Next.js App Router best practices."
 reviews:
