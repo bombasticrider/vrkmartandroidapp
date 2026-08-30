@@ -105,7 +105,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 >
                   {product.variants.map((v) => (
                     <option key={v.pack_size} value={v.pack_size}>
-                      {v.pack_size} — {formatCurrency(v.price)}
+                      {v.pack_size}
                     </option>
                   ))}
                 </select>

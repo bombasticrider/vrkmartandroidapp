@@ -77,8 +77,7 @@ export default function VariantModal({ product, isOpen, onClose }: VariantModalP
                 <img src={product.image_url || "/placeholder.png"} alt={product.name} className="w-full h-full object-contain p-1 mix-blend-multiply" />
               </div>
               <div>
-                <p className="text-xs text-gray-500 uppercase">{product.brand}</p>
-                <p className="text-sm font-medium text-gray-900 line-clamp-1">{product.name}</p>
+                <p className="text-sm font-bold text-gray-900 line-clamp-1">{product.name}</p>
               </div>
             </div>
 
