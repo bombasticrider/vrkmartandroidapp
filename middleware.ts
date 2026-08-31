@@ -17,13 +17,34 @@ export function middleware(request: NextRequest) {
   response.headers.set('Permissions-Policy', 'camera=(self), microphone=(), geolocation=(self)')
 
 
-  // ── Admin route protection ────────────────────────────────────────────────
+  // ── Admin route protection & RBAC ──────────────────────────────────────────
   if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
     const adminSession = request.cookies.get('vrk_admin_session')
     if (!adminSession?.value) {
       const loginUrl = new URL('/admin/login', request.url)
       loginUrl.searchParams.set('redirect', pathname)
       return NextResponse.redirect(loginUrl)
+    }
+
+    const role = request.cookies.get('vrk_staff_role')?.value || 'SUPER_ADMIN'
+
+    // Role-specific route redirection if accessing unauthorized tabs
+    if (
+      role === 'SALES' &&
+      (pathname.startsWith('/admin/products') ||
+        pathname.startsWith('/admin/orders') ||
+        pathname.startsWith('/admin/team') ||
+        pathname === '/admin/dashboard')
+    ) {
+      return NextResponse.redirect(new URL('/admin/members', request.url))
+    }
+
+    if (role === 'CATEGORY_MANAGER' && !pathname.startsWith('/admin/products')) {
+      return NextResponse.redirect(new URL('/admin/products', request.url))
+    }
+
+    if (role === 'DELIVERY' && !pathname.startsWith('/admin/orders')) {
+      return NextResponse.redirect(new URL('/admin/orders', request.url))
     }
   }
 
