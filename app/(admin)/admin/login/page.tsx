@@ -1,17 +1,26 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Lock, Mail, Phone, AlertCircle, Loader2, KeyRound, ShieldCheck } from 'lucide-react';
+import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from 'firebase/auth';
+import { firebaseAuth } from '@/lib/firebase';
+
+declare global {
+  interface Window {
+    adminRecaptchaVerifier?: RecaptchaVerifier;
+    adminConfirmationResult?: ConfirmationResult;
+  }
+}
 
 export default function AdminLoginPage() {
   const [loginMethod, setLoginMethod] = useState<'OTP' | 'PASSWORD'>('OTP');
 
-  // Mobile OTP State
+  // Mobile OTP State (Firebase)
   const [mobile, setMobile] = useState('8008445388');
   const [otp, setOtp] = useState('');
   const [otpSent, setOtpSent] = useState(false);
-  const [devOtp, setDevOtp] = useState<string | null>(null);
+  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
 
   // Email/Password State
   const [email, setEmail] = useState('admin@vrkmart.in');
@@ -20,7 +29,34 @@ export default function AdminLoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSendOtp = async (e: React.FormEvent) => {
+  // Setup invisible reCAPTCHA on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        if (!window.adminRecaptchaVerifier) {
+          window.adminRecaptchaVerifier = new RecaptchaVerifier(firebaseAuth, 'admin-recaptcha-container', {
+            size: 'invisible',
+            callback: () => {
+              console.log('Admin Firebase reCAPTCHA verified');
+            },
+          });
+        }
+      } catch (err) {
+        console.error('Firebase Recaptcha init error:', err);
+      }
+    }
+
+    return () => {
+      if (window.adminRecaptchaVerifier) {
+        try {
+          window.adminRecaptchaVerifier.clear();
+        } catch (_) {}
+        window.adminRecaptchaVerifier = undefined;
+      }
+    };
+  }, []);
+
+  const handleSendFirebaseOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     const clean = mobile.replace(/\D/g, '').trim();
     if (clean.length !== 10) {
@@ -30,27 +66,33 @@ export default function AdminLoginPage() {
 
     setLoading(true);
     setError('');
+
     try {
-      const res = await fetch('/api/auth/otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mobile: clean }),
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setOtpSent(true);
-        if (data.devOtp) setDevOtp(data.devOtp);
-      } else {
-        setError(data.error || 'Failed to send OTP. Ensure Twilio credentials or dev mock.');
+      if (!window.adminRecaptchaVerifier) {
+        window.adminRecaptchaVerifier = new RecaptchaVerifier(firebaseAuth, 'admin-recaptcha-container', {
+          size: 'invisible',
+        });
       }
-    } catch (err) {
-      setError('Connection error. Please try again.');
+
+      const formattedPhone = `+91${clean}`;
+      const confirmation = await signInWithPhoneNumber(
+        firebaseAuth,
+        formattedPhone,
+        window.adminRecaptchaVerifier
+      );
+
+      window.adminConfirmationResult = confirmation;
+      setConfirmationResult(confirmation);
+      setOtpSent(true);
+    } catch (err: any) {
+      console.error('Firebase SMS dispatch error:', err);
+      setError(err.message || 'Failed to dispatch Firebase OTP SMS. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleVerifyOtp = async (e: React.FormEvent) => {
+  const handleVerifyFirebaseOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!otp || otp.length !== 6) {
       setError('Please enter the 6-digit OTP code.');
@@ -61,20 +103,29 @@ export default function AdminLoginPage() {
     setError('');
 
     try {
+      const confirmObj = confirmationResult || window.adminConfirmationResult;
+      if (!confirmObj) {
+        throw new Error('OTP session expired. Please request a new OTP.');
+      }
+
+      // 1. Confirm code with Firebase Auth
+      await confirmObj.confirm(otp);
+
+      // 2. Authorize staff role with backend session
       const res = await fetch('/api/admin/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mobile, otp }),
+        body: JSON.stringify({ mobile }),
       });
 
       const data = await res.json();
       if (res.ok && data.success) {
         window.location.href = data.redirectUrl || '/admin/dashboard';
       } else {
-        setError(data.message || 'Invalid or unauthorized staff OTP.');
+        setError(data.message || 'Unauthorized staff access.');
       }
-    } catch (err) {
-      setError('Connection error during verification.');
+    } catch (err: any) {
+      setError(err.message || 'Invalid OTP code. Please check and re-enter.');
     } finally {
       setLoading(false);
     }
@@ -107,6 +158,9 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4">
+      {/* Invisible reCAPTCHA container for Firebase Phone Auth */}
+      <div id="admin-recaptcha-container"></div>
+
       <div className="max-w-md w-full bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
         {/* Brand Logo & Heading */}
         <div className="text-center mb-6 flex flex-col items-center">
@@ -120,7 +174,7 @@ export default function AdminLoginPage() {
             />
           </div>
           <h1 className="text-xl font-extrabold text-[#1E3A8A]">Staff &amp; Admin Portal</h1>
-          <p className="text-gray-500 text-xs mt-0.5">Secure Role-Based Operations Access</p>
+          <p className="text-gray-500 text-xs mt-0.5">Powered by Google Firebase Phone Auth</p>
         </div>
 
         {/* Login Method Toggle */}
@@ -137,7 +191,7 @@ export default function AdminLoginPage() {
                 : 'text-gray-500 hover:text-gray-800'
             }`}
           >
-            📱 Mobile OTP Login
+            📱 Firebase OTP
           </button>
           <button
             type="button"
@@ -151,7 +205,7 @@ export default function AdminLoginPage() {
                 : 'text-gray-500 hover:text-gray-800'
             }`}
           >
-            🔑 Password Login
+            🔑 Master Password
           </button>
         </div>
 
@@ -163,19 +217,11 @@ export default function AdminLoginPage() {
           </div>
         )}
 
-        {/* Dev OTP Helper Banner */}
-        {devOtp && (
-          <div className="bg-blue-50 border border-blue-200 text-[#1E3A8A] p-2.5 rounded-xl mb-4 text-xs font-mono font-bold flex items-center justify-between">
-            <span>Dev Mock OTP:</span>
-            <span className="bg-blue-200 px-2 py-0.5 rounded">{devOtp}</span>
-          </div>
-        )}
-
-        {/* ── METHOD 1: MOBILE OTP LOGIN ── */}
+        {/* ── METHOD 1: FIREBASE MOBILE OTP LOGIN ── */}
         {loginMethod === 'OTP' && (
           <div>
             {!otpSent ? (
-              <form onSubmit={handleSendOtp} className="space-y-4">
+              <form onSubmit={handleSendFirebaseOtp} className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-1.5">
                     Authorized Mobile Number
@@ -192,7 +238,7 @@ export default function AdminLoginPage() {
                     />
                   </div>
                   <p className="text-[11px] text-gray-400 mt-1">
-                    Super Admin default: <span className="font-bold text-gray-600">8008445388</span>
+                    Super Admin: <span className="font-bold text-gray-600">8008445388</span>
                   </p>
                 </div>
 
@@ -205,16 +251,16 @@ export default function AdminLoginPage() {
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
                     <>
-                      <span>Send Verification OTP</span>
+                      <span>Send Firebase SMS OTP</span>
                     </>
                   )}
                 </button>
               </form>
             ) : (
-              <form onSubmit={handleVerifyOtp} className="space-y-4">
+              <form onSubmit={handleVerifyFirebaseOtp} className="space-y-4">
                 <div>
                   <div className="flex justify-between items-center mb-1.5">
-                    <label className="text-xs font-bold text-gray-700">Enter 6-Digit OTP</label>
+                    <label className="text-xs font-bold text-gray-700">Enter 6-Digit SMS OTP</label>
                     <button
                       type="button"
                       onClick={() => setOtpSent(false)}
@@ -257,7 +303,7 @@ export default function AdminLoginPage() {
           </div>
         )}
 
-        {/* ── METHOD 2: PASSWORD LOGIN ── */}
+        {/* ── METHOD 2: MASTER PASSWORD LOGIN ── */}
         {loginMethod === 'PASSWORD' && (
           <form onSubmit={handlePasswordLogin} className="space-y-4">
             <div>

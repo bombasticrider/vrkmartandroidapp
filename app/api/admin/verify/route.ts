@@ -1,17 +1,15 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { getStaffUserByMobile, ROLE_DEFAULT_ROUTES } from '@/lib/rbac';
-import { verifyOtpCode } from '@/lib/twilio';
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     const cookieStore = cookies();
 
-    // ── Method 1: Mobile + OTP Login ─────────────────────────────────────────
-    if (body.mobile && body.otp) {
+    // ── Method 1: Mobile Staff Verification (Post Firebase Auth) ─────────────
+    if (body.mobile) {
       const cleanMobile = String(body.mobile).replace(/\D/g, '').trim();
-      const otp = String(body.otp).trim();
 
       // Check if phone number is an authorized staff/admin user
       const staffUser = await getStaffUserByMobile(cleanMobile);
@@ -23,15 +21,6 @@ export async function POST(req: Request) {
             message: 'Access Denied: Your phone number is not registered as authorized staff.',
           },
           { status: 403 }
-        );
-      }
-
-      // Verify OTP code
-      const verification = await verifyOtpCode(cleanMobile, otp);
-      if (!verification.valid) {
-        return NextResponse.json(
-          { success: false, message: 'Invalid or expired OTP code.' },
-          { status: 400 }
         );
       }
 

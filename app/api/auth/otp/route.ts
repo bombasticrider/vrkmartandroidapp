@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { sendOtp, verifyOtpCode } from '@/lib/twilio';
 import { createServerClient } from '@/lib/supabaseServer';
 
 export const dynamic = 'force-dynamic';
@@ -10,7 +9,6 @@ const reqSchema = z.object({
 
 const verifySchema = z.object({
   mobile: z.string().length(10),
-  otp: z.string().length(6),
 });
 
 export async function POST(req: Request) {
@@ -18,15 +16,12 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { mobile } = reqSchema.parse(body);
 
-    // Send real SMS via Twilio Verify Service
-    const result = await sendOtp(mobile);
-
-    // Log to Supabase otp_verifications for audit trail
+    // Audit log OTP request in Supabase
     try {
       const supabase = createServerClient();
       await (supabase.from('otp_verifications') as any).insert({
         mobile,
-        otp_hash: 'TWILIO_VERIFY',
+        otp_hash: 'FIREBASE_AUTH',
         expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
         verified: false,
       });
@@ -36,8 +31,7 @@ export async function POST(req: Request) {
 
     return Response.json({
       success: true,
-      message: 'OTP sent successfully to your mobile number',
-      devOtp: result.otp, // Present during dev/mock fallback
+      message: 'OTP initiated via Firebase Auth',
     });
   } catch (error: any) {
     return Response.json(
@@ -52,20 +46,9 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const data = {
       mobile: searchParams.get('mobile'),
-      otp: searchParams.get('otp'),
     };
 
-    const { mobile, otp } = verifySchema.parse(data);
-
-    // Verify OTP via Twilio Verify API
-    const verification = await verifyOtpCode(mobile, otp);
-
-    if (!verification.valid) {
-      return Response.json(
-        { success: false, error: 'Invalid or expired OTP' },
-        { status: 400 }
-      );
-    }
+    const { mobile } = verifySchema.parse(data);
 
     // Check membership in live Supabase members table
     let isMember = false;
