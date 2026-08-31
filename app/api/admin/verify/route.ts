@@ -1,13 +1,14 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { getStaffUserByMobile, ROLE_DEFAULT_ROUTES } from '@/lib/rbac';
+import { signAdminToken } from '@/lib/session';
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     const cookieStore = cookies();
 
-    // ── Method 1: Mobile Staff Verification (Post Firebase Auth) ─────────────
+    // ── Method 1: Mobile Staff Verification (Post-Firebase Verification) ─────
     if (body.mobile) {
       const cleanMobile = String(body.mobile).replace(/\D/g, '').trim();
 
@@ -24,7 +25,13 @@ export async function POST(req: Request) {
         );
       }
 
-      const token = `vrk_staff_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      // Generate cryptographically signed HMAC SHA-256 session token
+      const token = signAdminToken({
+        role: staffUser.role,
+        mobile: staffUser.mobile,
+        name: staffUser.name,
+      });
+
       const redirectUrl = ROLE_DEFAULT_ROUTES[staffUser.role] || '/admin/dashboard';
 
       const response = NextResponse.json({
@@ -55,29 +62,30 @@ export async function POST(req: Request) {
       return response;
     }
 
-    // ── Method 2: Email + Password Login (Direct Super Admin) ─────────────────
+    // ── Method 2: Email + Password Login (Strict Server Secret Verification) ──
     const email = (body.email || '').trim().toLowerCase();
     const password = (body.password || '').trim();
 
-    const allowedEmails = [
-      (process.env.ADMIN_EMAIL || 'admin@vrkmart.in').toLowerCase(),
-      'admin@vrkmart.in',
-      'admin@vrkmart.com',
-    ];
+    const configuredEmail = (process.env.ADMIN_EMAIL || '').trim().toLowerCase();
+    const configuredSecret = (process.env.ADMIN_SECRET_KEY || '').trim();
 
-    const configuredSecret = process.env.ADMIN_SECRET_KEY || 'vrkmart_admin_2024_secure_key_change_in_prod';
-    const allowedPasswords = [
-      configuredSecret,
-      'vrkmart_admin_2024_secure_key_change_in_prod',
-      'admin123',
-      'admin',
-    ];
+    // Reject if admin credentials are not properly configured in environment
+    if (!configuredEmail || !configuredSecret) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Password login is disabled. Please use Mobile OTP login.',
+        },
+        { status: 403 }
+      );
+    }
 
-    const isValidEmail = allowedEmails.includes(email);
-    const isValidPassword = allowedPasswords.includes(password);
-
-    if (isValidEmail && isValidPassword) {
-      const token = `vrk_adm_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    if (email === configuredEmail && password === configuredSecret) {
+      const token = signAdminToken({
+        role: 'SUPER_ADMIN',
+        mobile: '8008445388',
+        name: 'Super Admin',
+      });
 
       const response = NextResponse.json({
         success: true,
@@ -110,7 +118,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         success: false,
-        message: 'Invalid credentials. Please enter a valid email & password or use Mobile OTP.',
+        message: 'Invalid credentials. Please enter valid email & password or use Mobile OTP.',
       },
       { status: 401 }
     );

@@ -67,9 +67,9 @@ export async function POST(req: Request) {
         organizer_code: organizerCode || 'VRK-ORG-101',
         signature_path: signaturePath || null,
         selfie_path: selfiePath || null,
-        payment_reference: paymentReference || `PAY_MOCK_${Date.now()}`,
-        payment_status: 'PAID',
-        membership_status: 'ACTIVE',
+        payment_reference: paymentReference || `INIT_${Date.now()}`,
+        payment_status: 'PENDING',
+        membership_status: 'PENDING',
       })
       .select('id, vrk_id, full_name, mobile, serial_number, created_at')
       .single();

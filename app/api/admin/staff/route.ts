@@ -1,11 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllStaffUsers, upsertStaffUser, StaffRole } from '@/lib/rbac';
 import { createServerClient } from '@/lib/supabaseServer';
+import { getAuthenticatedStaff } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
+    const staff = await getAuthenticatedStaff(req);
+    if (!staff || (staff.role !== 'SUPER_ADMIN' && staff.role !== 'ADMIN')) {
+      return NextResponse.json(
+        { success: false, error: 'Forbidden: Admin access required' },
+        { status: 403 }
+      );
+    }
+
     const staffList = await getAllStaffUsers();
     return NextResponse.json({ success: true, staff: staffList });
   } catch (err: any) {
@@ -15,6 +24,14 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const staff = await getAuthenticatedStaff(req);
+    if (!staff || (staff.role !== 'SUPER_ADMIN' && staff.role !== 'ADMIN')) {
+      return NextResponse.json(
+        { success: false, error: 'Forbidden: Admin access required' },
+        { status: 403 }
+      );
+    }
+
     const body = await req.json();
     const { name, mobile, email, role, is_active } = body;
 
@@ -36,6 +53,7 @@ export async function POST(req: NextRequest) {
       email,
       role,
       is_active: is_active !== undefined ? Boolean(is_active) : true,
+      created_by: staff.name,
     });
 
     if (!result.success) {
@@ -50,6 +68,14 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
+    const staff = await getAuthenticatedStaff(req);
+    if (!staff || (staff.role !== 'SUPER_ADMIN' && staff.role !== 'ADMIN')) {
+      return NextResponse.json(
+        { success: false, error: 'Forbidden: Admin access required' },
+        { status: 403 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
     const mobile = (searchParams.get('mobile') || '').replace(/\D/g, '');
 

@@ -180,8 +180,15 @@ export default function PhoneAuthModal({
 
       const verifiedMobile = mobile.replace(/\D/g, '');
 
+      // Establish secure server-side customer session
+      await fetch('/api/auth/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mobile: verifiedMobile }),
+      });
+
       // Fetch member profile from Supabase
-      const checkRes = await fetch(`/api/auth/otp?mobile=${verifiedMobile}&otp=${fullOtp}`);
+      const checkRes = await fetch(`/api/auth/otp?mobile=${verifiedMobile}`);
       const checkData = await checkRes.json();
 
       const existingName = checkData.memberData?.full_name;

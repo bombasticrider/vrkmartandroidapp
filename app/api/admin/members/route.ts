@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabaseServer';
+import { getAuthenticatedStaff } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
+    const staff = await getAuthenticatedStaff(req);
+    if (!staff) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
     const supabase = createServerClient();
 
     // 1. Fetch all members
@@ -89,6 +95,11 @@ export async function GET(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
+    const staff = await getAuthenticatedStaff(req);
+    if (!staff) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await req.json();
     const { memberId, status } = body;
 

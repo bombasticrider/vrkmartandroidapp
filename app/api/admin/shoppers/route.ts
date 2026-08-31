@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabaseServer';
+import { getAuthenticatedStaff } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
+    const staff = await getAuthenticatedStaff(req);
+    if (!staff) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
     const supabase = createServerClient();
 
     // 1. Fetch all orders to aggregate shopper stats

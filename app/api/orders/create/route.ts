@@ -33,7 +33,7 @@ export async function POST(req: Request) {
         delivery_address: deliveryAddress || { city: 'Bengaluru', state: 'Karnataka' },
         status: 'PLACED',
         payment_method: paymentMethod,
-        payment_status: paymentMethod === 'UPI' ? 'COLLECTED' : 'PENDING',
+        payment_status: 'PENDING',
         subtotal: Number(subtotal) || 0,
         delivery_fee: Number(deliveryFee) || 0,
         total_amount: Number(totalAmount) || 0,
