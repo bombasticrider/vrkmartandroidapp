@@ -146,10 +146,10 @@ export default function HomePage() {
       <div className="rounded-2xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 p-3.5 sm:p-5 text-white shadow-lg flex flex-col sm:flex-row items-center justify-between gap-3 border border-amber-300/30">
         <div className="space-y-1 text-center sm:text-left">
           <div className="inline-flex items-center gap-1 bg-black/20 text-white font-bold text-[10px] sm:text-xs px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-            <Sparkles size={12} className="text-amber-200" /> ₹12,000 Monthly Milestone
+            <Sparkles size={12} className="text-amber-200" /> Shop for ₹12,000 Monthly
           </div>
           <h3 className="text-sm sm:text-base font-extrabold">
-            Your Dreams We Will Fulfill — VRK Welfare Scheme
+            Your Dreams We Will Fulfill — VRK Welfare Plan
           </h3>
           <p className="text-[11px] sm:text-xs text-amber-100 max-w-xl">
             Free Mobile Recharge, Tour Packages, Job Opportunities, Education, Medical Cover &amp; 2BHK Dream Home!

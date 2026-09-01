@@ -92,7 +92,7 @@ export default function WelcomeBenefitsModal() {
               className="flex items-center justify-center gap-1.5 bg-[#10B981] hover:bg-emerald-600 text-white font-black py-2.5 px-3 rounded-xl text-xs shadow-md transition-all active:scale-98 cursor-pointer"
             >
               <ShoppingBag className="w-4 h-4 shrink-0" />
-              <span className="truncate">Shop Mandi Rates</span>
+              <span className="truncate">Shop Products</span>
             </button>
           </div>
         </div>
